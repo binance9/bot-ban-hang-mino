@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hướng dẫn 3 bước — Cửa hàng của Mino</title>
+<meta name="description" content="3 bước dùng bot bán hàng: sửa thông tin shop, mở web cho khách, bật bot trả lời trên Facebook/Zalo.">
+<style>
+  :root{
+    --bg:#f5f8ff; --card:#fff; --vien:#e4eaf3;
+    --chu:#1e2a3b; --mo:#6b7a90;
+    --xanh:#2e6cf6; --xanh-dam:#1d4ed8; --xanh-nen:#e8f0fe;
+    --tim:#8b5cf6; --tim-nen:#ede9fe;
+    --luc:#16a34a; --luc-nen:#e5f6ec;
+    --cam-nen:#fdf1dd; --cam-chu:#b45309;
+    --toi:#1f2b45;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Inter","Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+    background:var(--bg);color:var(--chu);line-height:1.6;font-size:16px}
+  a{color:var(--xanh-dam)}
+  .khung{max-width:820px;margin:0 auto;padding:0 20px}
+
+  .top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--vien)}
+  .top .khung{display:flex;align-items:center;gap:12px;height:60px}
+  .logo{font-weight:800;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--chu)}
+  .logo .dau{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--xanh),var(--tim));
+    color:#fff;display:grid;place-items:center;font-size:15px}
+  .top nav{margin-left:auto;display:flex;gap:18px;font-size:.92rem;font-weight:600}
+  .top nav a{color:var(--mo);text-decoration:none}
+  .top nav a:hover{color:var(--xanh)}
+
+  .hero{text-align:center;padding:42px 0 10px}
+  .hero h1{font-size:clamp(1.6rem,4vw,2.3rem);font-weight:800}
+  .hero p{color:var(--mo);margin-top:10px;font-size:1.05rem}
+  .cam-ket{display:flex;gap:10px;justify-content:center;margin:18px 0 8px;flex-wrap:wrap}
+  .cam-ket span{background:#fff;border:1px solid var(--vien);border-radius:99px;
+    padding:7px 16px;font-size:.9rem;font-weight:700}
+
+  .buoc{display:flex;gap:16px;background:var(--card);border:1px solid var(--vien);
+    border-radius:18px;padding:26px 28px;margin:20px 0;scroll-margin-top:80px}
+  .so{width:56px;height:56px;border-radius:16px;flex:none;
+    background:linear-gradient(135deg,var(--xanh),var(--tim));color:#fff;
+    display:grid;place-items:center;font-size:1.5rem;font-weight:800}
+  .buoc h2{font-size:1.2rem;margin-bottom:6px}
+  .buoc .mota{color:var(--mo);font-size:.95rem;margin-bottom:12px}
+  .buoc ol{margin:0 0 0 20px}
+  .buoc li{margin:8px 0}
+  .buoc code{font-family:Consolas,Menlo,monospace;font-size:.85em;background:#eef2f9;
+    border-radius:6px;padding:2px 7px;color:var(--xanh-dam)}
+  .khung-code{background:#fffbea;border:1px dashed #e5c95c;border-radius:12px;
+    padding:14px 18px;margin:12px 0 4px;font-size:.92rem}
+  .khung-code b{color:var(--cam-chu)}
+
+  .lo{background:var(--card);border:1px solid var(--vien);border-radius:18px;
+    padding:24px 28px;margin:20px 0}
+  .lo h2{font-size:1.2rem;margin-bottom:10px}
+  .lo ul{margin-left:20px}
+  .lo li{margin:8px 0}
+  .loi-khuyen{background:var(--luc-nen);border-radius:12px;padding:12px 16px;
+    margin:12px 0;font-size:.95rem;color:#14532d}
+
+  details{background:var(--card);border:1px solid var(--vien);border-radius:14px;
+    padding:16px 22px;margin:12px 0}
+  summary{font-weight:700;cursor:pointer;font-size:.98rem}
+  details[open] summary{margin-bottom:8px}
+  .chi-tiet{margin-top:10px;font-size:.93rem;color:#374151}
+  .chi-tiet ol,.chi-tiet ul{margin:8px 0 8px 22px}
+  .chi-tiet li{margin:6px 0}
+  pre{background:var(--toi);color:#dbe7ff;border-radius:10px;padding:14px 16px;
+    overflow-x:auto;font-family:Consolas,Menlo,monospace;font-size:.8rem;margin:10px 0}
+
+  .hoi{background:var(--card);border:1px solid var(--vien);border-radius:18px;padding:24px 28px;margin:20px 0}
+  .hoi h2{font-size:1.2rem;margin-bottom:10px}
+  .hoi dl{margin:0}
+  .hoi dt{font-weight:700;margin-top:12px}
+  .hoi dd{margin:4px 0 0 0;color:#374151}
+
+  footer{background:var(--toi);color:#c3cde0;text-align:center;padding:24px 0;margin-top:34px;font-size:.9rem}
+  footer a{color:#fff}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="khung">
+    <a class="logo" href="index.html"><span class="dau">🧁</span>Cửa hàng của Mino</a>
+    <nav>
+      <a href="index.html">Trang bán hàng</a>
+      <a href="admin.html">Kênh Chat</a>
+    </nav>
+  </div>
+</header>
+
+<div class="khung">
+
+  <div class="hero">
+    <h1>🚀 Dùng bot bán hàng trong 3 bước</h1>
+    <p>Không cần biết code. Làm theo đúng thứ tự, tổng cộng khoảng 15 phút.</p>
+    <div class="cam-ket">
+      <span>✅ Không cần cài gì</span>
+      <span>✅ Miễn phí</span>
+      <span>✅ Làm sai chỉ cần sửa lại</span>
+    </div>
+  </div>
+
+  <!-- ============ BƯỚC 1 ============ -->
+  <div class="buoc">
+    <div class="so">1</div>
+    <div style="flex:1">
+      <h2>Điền thông tin shop vào trang Cài đặt</h2>
+      <p class="mota">Không cần sửa code — điền form, bấm Lưu là xong.</p>
+      <ol>
+        <li>Mở file <code>caidat.html</code> (hoặc bấm <b>⚙️ Cài đặt</b> trên menu của trang bán hàng).</li>
+        <li>Điền tên shop, số điện thoại → bấm <b>＋ Thêm món</b> để nhập món bán (tên + giá).</li>
+        <li>Thêm vài kịch bản: khách hỏi <i>"giá"</i> → bot trả câu gì; khách hỏi <i>"ship"</i> → trả câu gì.</li>
+        <li>Bấm <b>💾 Lưu cài đặt</b> → mở lại <code>index.html</code> (nhấn F5) — bot nói theo mình liền.</li>
+      </ol>
+      <div class="loi-khuyen">💡 Sửa hỏng muốn về như cũ? Bấm <b>↺ Khôi phục mặc định</b> — mọi thứ về như ban đầu trong 1 giây.</div>
+    </div>
+  </div>
+
+  <!-- ============ BƯỚC 2 ============ -->
+  <div class="buoc">
+    <div class="so">2</div>
+    <div style="flex:1">
+      <h2>Mở web cho khách vào</h2>
+      <p class="mota">Chọn 1 trong 2 cách, cách nào cũng 2 phút:</p>
+      <ol>
+        <li><b>Dùng tại chỗ:</b> nhấn đúp <code>index.html</code> — bot hoạt động ngay, phù hợp khi bán qua Zalo/gửi file cho quen.</li>
+        <li><b>Muốn có đường link gửi khách:</b> vào <b>netlify.com/drop</b> → kéo cả thư mục chứa web vào → nhận ngay 1 link (VD: <code>shopcualan.netlify.app</code>) → gửi link đó lên fanpage, bioshop. Miễn phí.</li>
+      </ol>
+      <div class="loi-khuyen">💡 Khách vào link, chat với bot, điền form "Đặt hàng ngay" — đơn hiện ngay trong Kênh Chat cho mình xử lý.</div>
+    </div>
+  </div>
+
+  <!-- ============ BƯỚC 3 ============ -->
+  <div class="buoc">
+    <div class="so">3</div>
+    <div style="flex:1">
+      <h2>Bật bot trả lời trên Facebook / Zalo</h2>
+      <p class="mota">Dùng <b>AhaChat</b> — miễn phí, tiếng Việt, kéo–thả, không cần code. Làm 1 lần cho cả Messenger và Zalo.</p>
+      <ol>
+        <li>Vào <b>ahachat.com</b> → đăng nhập bằng tài khoản Facebook.</li>
+        <li>Bấm <b>Kết nối trang</b> → chọn fanpage của mình → đồng ý quyền.</li>
+        <li>Vào mục dựng kịch bản (menu trái, tên dạng <i>"Kịch bản / Trả lời tự động / Flow"</i>) → tạo kịch bản <b>Trả lời theo từ khóa</b>.</li>
+        <li>Khách hỏi <i>"giá / bao nhiêu"</i> → dán câu trả lời giá. Thêm vài cặp hỏi–đáp: ship, đổi trả, đặt hàng (chép từ khối <code>hoiDap</code> ở Bước 1 là chuẩn nhất).</li>
+        <li>Bấm <b>Bật / Live</b>. Nhắn thử fanpage — bot trả lời là xong 🎉</li>
+        <li>Muốn thêm Zalo: trong AhaChat chọn <b>Kết nối Zalo OA</b> → đăng nhập Zalo → làm kịch bản y hệt.</li>
+      </ol>
+      <div class="loi-khuyen">💡 Mẹo: bot không cần trả lời hết — kết thúc mỗi câu bằng "để lại sđt để shop gọi tư vấn nha ạ". Sđt về tay là có đơn.</div>
+    </div>
+  </div>
+
+  <!-- ============ QUẢN LÝ ============ -->
+  <div class="lo">
+    <h2>📋 Hằng ngày chỉ cần 2 phút</h2>
+    <ul>
+      <li>Mở <code>admin.html</code> (bấm "🖥️ Kênh Chat" trên menu).</li>
+      <li>Xem tab <b style="color:var(--xanh-dam)">Chờ phản hồi</b> → khách nào bot chưa xử lý được thì trả lời tay (gõ vào ô dưới cùng, Enter).</li>
+      <li>Đơn khách đặt qua form nằm sẵn ở kênh Website Chat, kèm tên + sđt + địa chỉ — gọi xác nhận là xuất kho.</li>
+    </ul>
+    <div class="loi-khuyen">💡 Ghi chú nội bộ (tab vàng trong khung chat) để ghi "khách này giao buổi sáng" — chỉ mình mình thấy.</div>
+  </div>
+
+  <!-- ============ PHẦN DÀI: GỤP LẠI, KHÔNG CẦN ĐỌC ============ -->
+  <h2 style="margin:30px 0 6px;font-size:1.1rem">🧰 Phần kỹ thuật — gấp lại, khi nào cần mới mở</h2>
+
+  <details>
+    <summary>Kết nối Messenger bằng API chính chủ (không qua AhaChat)</summary>
+    <div class="chi-tiet">
+      Cần một server có HTTPS. Đủ 7 bước:
+      <ol>
+        <li><b>developers.facebook.com</b> → Create App → loại Business.</li>
+        <li>Thêm sản phẩm <b>Messenger</b>.</li>
+        <li>Chọn fanpage → <b>Generate Page Access Token</b>.</li>
+        <li>Chạy webhook tối giản (Node.js):</li>
+      </ol>
+<pre>const express = require("express");
+const app = express(); app.use(express.json());
+const VERIFY_TOKEN = "mino-verify-2026";
+const PAGE_TOKEN = "DÁN_PAGE_ACCESS_TOKEN";
+
+app.get("/webhook", (req, res) => {
+  if (req.query["hub.verify_token"] === VERIFY_TOKEN)
+    return res.send(req.query["hub.challenge"]);
+  res.sendStatus(403);
+});
+app.post("/webhook", async (req, res) => {
+  for (const e of req.body.entry || [])
+    for (const m of e.messaging || [])
+      if (m.message?.text)
+        await fetch("https://graph.facebook.com/v21.0/" +
+          m.recipient.id + "/messages?access_token=" + PAGE_TOKEN, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            recipient: { id: m.sender.id },
+            message: { text: "Dạ em là bot Mino nha anh/chị!" }
+          })
+        });
+  res.sendStatus(200);
+});
+app.listen(3000);</pre>
+      <ol start="5">
+        <li>App Meta → Webhooks → dán <code>https://ten-mien/webhook</code> + Verify Token → đăng ký trường <code>messages</code>.</li>
+        <li>Chuyển app sang <b>Live</b> (app Development chỉ bot trả lời được cho chính mình — lỗi "bot im" phổ biến nhất là quên chỗ này).</li>
+        <li>Messenger miễn phí trong 24h kể từ tin cuối của khách; muốn nhắn sau đó phải dùng Message Tags theo quy định Meta.</li>
+      </ol>
+    </div>
+  </details>
+
+  <details>
+    <summary>Kết nối Zalo OA bằng API chính chủ</summary>
+    <div class="chi-tiet">
+      <ol>
+        <li>Tạo Official Account tại <b>oa.zalo.me</b>.</li>
+        <li><b>developers.zalo.me</b> → tạo Ứng dụng → thêm sản phẩm <b>Zalo OA</b> → ghi lại OA ID, App ID, App Secret.</li>
+        <li>Lấy OA Access Token theo luồng xác thực v4 (token ngắn hạn, có refresh_token — cần cron gia hạn trên server).</li>
+        <li>Đăng ký Webhook HTTPS, bật sự kiện <code>user_send_text</code>, <code>user_send_image</code>.</li>
+        <li>Nhận tin → trả lời qua API:</li>
+      </ol>
+<pre>await fetch("https://openapi.zalo.me/v3.0/oa/message/cs", {
+  method: "POST",
+  headers: { "Content-Type": "application/json", access_token: OA_ACCESS_TOKEN },
+  body: JSON.stringify({
+    recipient: { user_id: USER_ID },
+    message: { text: "Dạ em là bot Mino nha anh/chị!" }
+  })
+});</pre>
+      <p>Nhớ: OA thường giới hạn số tin/tháng theo gói; tin mẫu sau bán dùng ZNS (nội dung phải được Zalo duyệt).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Khi nào cần thuê/host server riêng?</summary>
+    <div class="chi-tiet">
+      <ul>
+        <li>Muốn nhiều người cùng xem Kênh Chat từ nhiều máy khác nhau.</li>
+        <li>Muốn hội thoại + đơn không mất khi đổi máy/khách hàng xóa trình duyệt (hiện dữ liệu lưu trong trình duyệt — nhấn F12 → Application → Local Storage xem, xóa khoá <code>donhang</code> là reset).</li>
+        <li>Muốn bot thông minh hơn bảng từ khóa (cắm AI vào hàm <code>botTraLoi</code> — chỉ thay 1 hàm).</li>
+      </ul>
+      Đủ một VPS nhỏ (300–500k/tháng) hoặc Vercel/Railway gói free là chạy được webhook mục trên.
+    </div>
+  </details>
+
+  <!-- ============ HỎI NHANH ============ -->
+  <div class="hoi">
+    <h2>🙋 Hỏi nhanh — đáp gọn</h2>
+    <dl>
+      <dt>Bot không trả lời?</dt>
+      <dd>Câu hỏi có chứa tên món chưa? Chưa thì bot trả lời nhờ chủ shop — đó là hành vi đúng, không phải lỗi.</dd>
+      <dt>Cài đặt sai, muốn về mặc định?</dt>
+      <dd>Mở <code>caidat.html</code> → bấm <b>↺ Khôi phục mặc định</b>. Không bao giờ sợ hỏng file.</dd>
+      <dt>Đơn hàng xem ở đâu?</dt>
+      <dd>Mở <code>admin.html</code> — đơn hiện là 1 hội thoại trong kênh Website Chat, kèm giá trị đơn.</dd>
+      <dt>Đổi tên/màu thương hiệu?</dt>
+      <dd>Tên: khối CAU_HINH (Bước 1). Màu: sửa dòng <code>--xanh</code> và <code>--tim</code> ngay đầu file index/admin.</dd>
+      <dt>Có tốn phí gì không?</dt>
+      <dd>Web + bot trang web: không. AhaChat: có gói miễn phí. Messenger/Zalo gửi tin bình thường: miễn phí trong hạn mức.</dd>
+    </dl>
+  </div>
+
+</div>
+
+<footer>
+  <div class="khung">Cửa hàng của Mino — <a href="index.html">Trang bán hàng</a> · <a href="admin.html">Kênh Chat</a> · Bot trực 24/7 💜</div>
+</footer>
+
+</body>
+</html>

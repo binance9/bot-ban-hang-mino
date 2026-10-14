@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kênh Chat — Hội thoại | Cửa hàng của Mino</title>
+<meta name="description" content="Bảng quản trị hội thoại đa kênh của shop — bot Mino trả lời tự động, chủ shop tiếp tay khi cần.">
+<style>
+  :root{
+    --bg:#eef2f9;
+    --card:#ffffff;
+    --vien:#e4eaf3;
+    --chu:#1e2a3b;
+    --chu-mo:#6b7a90;
+    --chu-nhat:#9aa6b8;
+    --xanh:#2e6cf6;
+    --xanh-nen:#e8f0fe;
+    --xanh-dam:#1d4ed8;
+    --luc:#16a34a;   --luc-nen:#e5f6ec;
+    --cam:#f59e0b;   --cam-nen:#fdf1dd;
+    --do:#ef4444;
+    --toi:#1f2b45;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family:"Inter","Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+    background:var(--bg);color:var(--chu);font-size:14px;line-height:1.45;
+    overflow:hidden;
+  }
+  button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  input{font:inherit;color:inherit}
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-thumb{background:#cfd8e6;border-radius:99px}
+  ::-webkit-scrollbar-track{background:transparent}
+
+  /* ============ THANH TRÊN CÙNG ============ */
+  .topbar{
+    height:52px;background:var(--card);border-bottom:1px solid var(--vien);
+    display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+  }
+  .mcp{display:flex;align-items:center;gap:8px;color:var(--chu-mo);font-size:13px}
+  .mcp a{color:var(--chu-mo);text-decoration:none}
+  .mcp a:hover{color:var(--xanh)}
+  .mcp .nha{font-size:14px}
+  .mcp b{color:var(--chu);font-weight:700}
+  .topbar .dong{
+    width:32px;height:32px;border-radius:8px;color:var(--chu-mo);font-size:15px;
+    display:grid;place-items:center;
+  }
+  .topbar .dong:hover{background:var(--bg);color:var(--chu)}
+
+  /* ============ ĐẦU TRANG + KPI ============ */
+  .head{
+    display:flex;align-items:center;gap:22px;padding:14px 20px 12px;flex-wrap:wrap;
+  }
+  .head-title{display:flex;align-items:center;gap:14px;min-width:300px}
+  .logo-lon{
+    width:54px;height:54px;border-radius:14px;flex:none;position:relative;
+    background:linear-gradient(135deg,#3b82f6,#2e6cf6);
+    display:grid;place-items:center;font-size:24px;
+    box-shadow:0 8px 20px rgba(46,108,246,.35);
+  }
+  .logo-lon::after{
+    content:"";position:absolute;left:6px;bottom:6px;width:10px;height:10px;border-radius:99px;
+    background:var(--do);border:2px solid #fff;
+  }
+  .head-title h1{font-size:21px;font-weight:800;letter-spacing:-.2px}
+  .head-title p{color:var(--chu-mo);font-size:12.5px;margin-top:2px}
+  .time{display:flex;flex-direction:column;gap:4px;margin-left:6px}
+  .time span{font-size:11.5px;color:var(--chu-mo)}
+  .chon-ngay{
+    background:var(--card);border:1px solid var(--vien);border-radius:10px;
+    padding:9px 14px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;
+  }
+  .chon-ngay b{color:var(--chu-nhat);font-weight:400;font-size:11px}
+
+  .kpis{display:flex;gap:12px;margin-left:auto;align-items:stretch;flex-wrap:wrap}
+  .kpi{
+    background:var(--card);border:1px solid var(--vien);border-radius:14px;
+    padding:12px 16px;display:flex;align-items:center;gap:12px;min-width:172px;
+    box-shadow:0 1px 2px rgba(16,24,40,.04);
+  }
+  .kpi-icon{
+    width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:17px;flex:none;
+  }
+  .kpi-icon.xanh{background:var(--xanh-nen)}
+  .kpi-icon.luc{background:var(--luc-nen)}
+  .kpi-icon.cam{background:var(--cam-nen)}
+  .kpi-icon.xam{background:#eef1f6}
+  .kpi .ten{font-size:12.5px;color:var(--chu-mo);display:flex;align-items:center;gap:5px;white-space:nowrap}
+  .kpi .hang{display:flex;align-items:center;gap:8px;margin-top:2px}
+  .kpi .so{font-size:22px;font-weight:800;letter-spacing:-.4px}
+  .chip{font-size:11px;font-weight:700;border-radius:99px;padding:2px 7px;white-space:nowrap}
+  .chip.tang{background:var(--luc-nen);color:var(--luc)}
+  .chip.giam{background:#fde8e8;color:var(--do)}
+  .nut-toi{
+    width:54px;border-radius:14px;background:var(--toi);color:#fff;font-size:19px;
+    display:grid;place-items:center;flex:none;
+  }
+  .nut-toi:hover{filter:brightness(1.15)}
+
+  /* ============ LƯỚI ĐIỀU KHIỂN 4 CỘT ============ */
+  .console{
+    display:grid;
+    grid-template-columns:240px 352px minmax(0,1fr) 312px;
+    gap:14px;padding:2px 20px 18px;
+    height:calc(100vh - 138px);
+  }
+  .cot{
+    background:var(--card);border:1px solid var(--vien);border-radius:14px;
+    box-shadow:0 1px 2px rgba(16,24,40,.04);
+    display:flex;flex-direction:column;overflow:hidden;min-height:0;
+  }
+
+  /* ----- Cột 1: kênh ----- */
+  .kenh-head{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 10px}
+  .kenh-head b{font-size:14.5px}
+  .kenh-head button{color:var(--xanh);font-size:12.5px;font-weight:600}
+  .kenh-list{flex:1;overflow-y:auto;padding:0 8px}
+  .kenh-item{
+    display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;
+    cursor:pointer;position:relative;margin-bottom:2px;
+  }
+  .kenh-item:hover{background:#f4f7fc}
+  .kenh-item.active{background:var(--xanh-nen)}
+  .kenh-item.active .ten-kenh,.kenh-item.active .so-kenh{color:var(--xanh-dam);font-weight:700}
+  .k-ico{
+    width:28px;height:28px;border-radius:9px;display:grid;place-items:center;
+    font-size:13px;font-weight:800;color:#fff;flex:none;
+  }
+  .k-ico svg{width:15px;height:15px}
+  .ht-kenh-mini svg{width:9px;height:9px}
+  .ch-lai .k-ico svg{width:9px;height:9px}
+  .ten-kenh{flex:1;font-size:12.8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .so-kenh{font-size:12.5px;color:var(--chu-nhat)}
+  .badge-do{
+    background:var(--do);color:#fff;font-size:10.5px;font-weight:700;
+    border-radius:99px;min-width:18px;height:18px;display:grid;place-items:center;padding:0 5px;
+  }
+  .bot-status{
+    margin:8px;padding:9px 11px;border-radius:12px;background:#f0faf4;
+    border:1px solid #d3eedd;display:flex;align-items:center;gap:8px;font-size:17px;
+  }
+  .bot-status b{display:block;font-size:12px;color:#14532d;white-space:nowrap}
+  .bot-status span{display:block;font-size:10.5px;color:#3f8f5f;white-space:nowrap}
+  .bot-status .dot-xanh{
+    margin-left:auto;width:8px;height:8px;border-radius:99px;background:#22c55e;
+    box-shadow:0 0 0 3px #bbf7d0;animation:lanh .9s ease infinite alternate;
+  }
+  @keyframes lanh{to{opacity:.45}}
+
+  /* ----- Cột 2: danh sách hội thoại ----- */
+  .ds-title{font-size:14.5px;padding:16px 16px 8px}
+  .tabs{display:flex;gap:13px;padding:0 14px;border-bottom:1px solid var(--vien);overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs button{
+    padding:8px 0;font-size:12px;color:var(--chu-mo);font-weight:600;white-space:nowrap;
+    border-bottom:2px solid transparent;
+  }
+  .tabs button.active{color:var(--xanh);border-bottom-color:var(--xanh)}
+  .tabs button:hover{color:var(--xanh)}
+  .search{display:flex;align-items:center;gap:8px;margin:12px 14px 8px;background:var(--card);
+    border:1px solid var(--vien);border-radius:10px;padding:8px 10px}
+  .search input{flex:1;border:none;background:none;outline:none;font-size:12.5px}
+  .search input::placeholder{color:var(--chu-nhat)}
+  .search .loc{display:grid;place-items:center}
+  .ds{flex:1;overflow-y:auto;padding:2px 8px 10px}
+  .ht-item{
+    display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;cursor:pointer;
+  }
+  .ht-item:hover{background:#f4f7fc}
+  .ht-item.active{background:var(--xanh-nen)}
+  .ht-av{
+    width:40px;height:40px;border-radius:50%;display:grid;place-items:center;
+    color:#fff;font-weight:800;font-size:14px;flex:none;position:relative;
+  }
+  .ht-av .online{
+    position:absolute;right:-1px;bottom:-1px;width:10px;height:10px;border-radius:99px;
+    background:#22c55e;border:2px solid #fff;
+  }
+  .ht-giua{flex:1;min-width:0}
+  .ht-ten{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ht-xem{font-size:12px;color:var(--chu-mo);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+  .ht-item.active .ht-xem{color:var(--xanh-dam)}
+  .ht-phai{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}
+  .ht-gio{font-size:10.5px;color:var(--chu-nhat)}
+  .ht-kenh-mini{
+    width:17px;height:17px;border-radius:50%;display:grid;place-items:center;
+    font-size:9px;font-weight:800;color:#fff;
+  }
+
+  /* ----- Cột 3: chat ----- */
+  .chat-head{
+    padding:13px 18px;border-bottom:1px solid var(--vien);
+    display:flex;align-items:center;gap:12px;
+  }
+  .chat-head .ht-av{width:44px;height:44px;font-size:15px}
+  .ch-ten{display:flex;align-items:center;gap:8px;font-size:15.5px;font-weight:800}
+  .pill{
+    font-size:11px;font-weight:700;border-radius:99px;padding:3px 10px;
+    background:var(--xanh-nen);color:var(--xanh-dam);display:inline-flex;align-items:center;gap:4px;
+  }
+  .pill.luc{background:var(--luc-nen);color:#15803d}
+  .pill.cam{background:var(--cam-nen);color:#b45309}
+  .pill.xam{background:#eef1f6;color:var(--chu-mo)}
+  .ch-lai{font-size:12px;color:var(--chu-mo);margin-top:2px;display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .ch-lai .k-ico{width:16px;height:16px;font-size:9px;border-radius:50%}
+  .ch-cong-cu{margin-left:auto;display:flex;gap:6px}
+  .ch-cong-cu button{
+    width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:14px;color:var(--chu-mo);
+  }
+  .ch-cong-cu button:hover{background:var(--bg);color:var(--chu)}
+  .ch-cong-cu button.dang-star{color:#f59e0b}
+
+  .tin{flex:1;overflow-y:auto;padding:18px 22px;display:flex;flex-direction:column;gap:4px;background:#fbfcfe}
+  .tin-nhan{max-width:72%;margin-bottom:8px}
+  .bong{
+    padding:10px 14px;border-radius:14px;font-size:13.5px;white-space:pre-line;word-break:break-word;
+  }
+  .den{align-self:flex-start}
+  .den .bong{background:#f1f4f9;border-bottom-left-radius:4px}
+  .di{align-self:flex-end;text-align:right}
+  .di .bong{background:#e3edff;border-bottom-right-radius:4px;text-align:left}
+  .gio-tin{font-size:10.5px;color:var(--chu-nhat);margin-top:4px}
+  .di .gio-tin .tick{color:var(--xanh);font-weight:700}
+  .tep{
+    background:#fff;border:1px solid var(--vien);border-radius:12px;padding:11px 14px;
+    display:flex;align-items:center;gap:11px;min-width:230px;text-align:left;
+    box-shadow:0 1px 2px rgba(16,24,40,.05);
+  }
+  .tep .ico-pdf{
+    width:34px;height:34px;border-radius:8px;background:#fdecec;display:grid;place-items:center;
+    color:#e02d2d;font-size:11px;font-weight:800;flex:none;
+  }
+  .tep b{display:block;font-size:13px}
+  .tep small{color:var(--chu-mo);font-size:11px}
+  .tep .tai{margin-left:auto;color:var(--chu-mo);font-size:15px}
+  .tep .tai:hover{color:var(--xanh)}
+  .ghi-chu{
+    align-self:center;background:#fff8e1;border:1px dashed #f0c95c;color:#8a6d1a;
+    border-radius:10px;padding:7px 13px;font-size:12px;max-width:80%;margin:6px 0;
+  }
+
+  .soan{border-top:1px solid var(--vien);padding:0 18px 12px}
+  .soan-tabs{display:flex;gap:18px;border-bottom:1px solid var(--vien)}
+  .soan-tabs button{
+    padding:11px 0;font-size:13px;font-weight:700;color:var(--chu-mo);
+    border-bottom:2px solid transparent;
+  }
+  .soan-tabs button.active{color:var(--xanh);border-bottom-color:var(--xanh)}
+  .o-soan-lon{width:100%;border:none;outline:none;background:none;padding:13px 2px 8px;font-size:13.5px}
+  .o-soan-lon::placeholder{color:var(--chu-nhat)}
+  .soan-row{display:flex;align-items:center;gap:4px}
+  .soan-row .icon{
+    width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:15px;color:var(--chu-mo);
+  }
+  .soan-row .icon:hover{background:var(--bg)}
+  .gui{
+    margin-left:auto;width:40px;height:40px;border-radius:50%;background:var(--xanh);color:#fff;
+    display:grid;place-items:center;box-shadow:0 6px 14px rgba(46,108,246,.4);
+  }
+  .gui:hover{filter:brightness(1.08)}
+
+  /* ----- Cột 4: khách hàng ----- */
+  .khach{overflow-y:auto}
+  .kh-head{display:flex;align-items:center;justify-content:space-between;padding:15px 16px 6px}
+  .kh-head b{font-size:14.5px}
+  .kh-head button{color:var(--xanh);font-size:12px;font-weight:600}
+  .kh-dai-dien{display:flex;align-items:center;gap:12px;padding:8px 16px 14px;border-bottom:1px solid var(--vien)}
+  .kh-dai-dien .ht-av{width:52px;height:52px;font-size:18px}
+  .kh-dai-dien .ten-hang{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .kh-dai-dien b{font-size:15.5px}
+  .kh-truong{display:flex;justify-content:space-between;gap:10px;padding:7px 16px;font-size:12.5px}
+  .kh-truong .nhan{color:var(--chu-mo);flex:none;width:92px}
+  .kh-truong .gia-tri{font-weight:600;text-align:right;word-break:break-word}
+  .kh-truong .gia-tri .mini{color:var(--chu-nhat);margin-left:6px;font-size:11px}
+  .kh-muc{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 6px}
+  .kh-muc b{font-size:13.5px}
+  .kh-muc button{color:var(--xanh);font-size:12px;font-weight:600}
+  .the-hop{display:flex;flex-wrap:wrap;gap:8px;padding:4px 16px 6px}
+  .the{font-size:11.5px;font-weight:700;border-radius:8px;padding:4px 9px;display:inline-flex;gap:6px;align-items:center}
+  .the.xanh{background:var(--xanh-nen);color:var(--xanh-dam)}
+  .the.cam{background:var(--cam-nen);color:#b45309}
+  .the .x{cursor:pointer;opacity:.6}
+  .the .x:hover{opacity:1}
+  .co-hoi{margin:4px 16px;background:#f6f9ff;border:1px solid #dfe9fd;border-radius:12px;padding:12px 14px}
+  .co-hoi .ch-tieu{font-size:13px;font-weight:800;margin-bottom:8px}
+  .co-hoi .dong{display:flex;justify-content:space-between;font-size:12px;padding:3px 0}
+  .co-hoi .dong .nhan{color:var(--chu-mo)}
+  .co-hoi .dong .gt{font-weight:700}
+  .hoat-dong{padding:6px 16px 18px}
+  .hd-item{display:flex;gap:11px;padding:8px 0}
+  .hd-ico{
+    width:30px;height:30px;border-radius:9px;background:var(--xanh-nen);color:var(--xanh-dam);
+    display:grid;place-items:center;font-size:13px;flex:none;
+  }
+  .hd-item b{font-size:12.5px;font-weight:700;display:block}
+  .hd-item span{font-size:11px;color:var(--chu-nhat)}
+
+  .trong{padding:40px 20px;text-align:center;color:var(--chu-nhat);font-size:13px}
+
+  /* nút bot nổi — mở nhanh phía khách */
+  .noi-bot{position:fixed;bottom:22px;right:22px;z-index:60}
+  .nut-bot{
+    width:58px;height:58px;border-radius:50%;border:none;cursor:pointer;
+    background:linear-gradient(135deg,var(--xanh),var(--tim));color:#fff;
+    font-size:1.35rem;box-shadow:0 10px 24px rgba(46,108,246,.45);
+    display:grid;place-items:center;transition:transform .15s ease;
+  }
+  .nut-bot:hover{transform:scale(1.08)}
+  .nut-bot small{display:block;font-size:.55rem;font-weight:800;letter-spacing:.5px}
+
+  /* ============ THÔNG THƯỜNG ============ */
+  @media (max-width:1360px){ .console{grid-template-columns:216px 312px minmax(0,1fr) 296px} }
+  @media (max-width:1200px){ .khach{display:none} .console{grid-template-columns:216px 312px minmax(0,1fr)} }
+  @media (max-width:980px){
+    body{overflow:auto}
+    .console{display:flex;flex-direction:column;height:auto}
+    .cot{min-height:220px}
+    .tin{max-height:340px}
+    .kpis{margin-left:0}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== THANH TRÊN ===== -->
+<div class="topbar">
+  <div class="mcp">
+    <span class="nha">🏠</span>
+    <a href="index.html">Trang chủ</a>
+    <span>›</span>
+    <a href="admin.html">Kênh Chat</a>
+    <span>›</span>
+    <b>Hội thoại</b>
+  </div>
+  <button class="dong" onclick="location.href='caidat.html'" title="Cài đặt shop" style="margin-right:4px">⚙️</button>
+  <button class="dong" onclick="location.href='huong-dan.html'" title="Hướng dẫn sử dụng" style="margin-right:4px">📘</button>
+  <button class="dong" onclick="location.href='index.html'" title="Đóng bảng điều khiển">✕</button>
+</div>
+
+<!-- ===== ĐẦU TRANG + KPI ===== -->
+<header class="head">
+  <div class="head-title">
+    <div class="logo-lon">💬</div>
+    <div>
+      <h1>Kênh Chat</h1>
+      <p>Quản lý hội thoại đa kênh, chăm sóc khách hàng tập trung</p>
+    </div>
+  </div>
+  <div class="time">
+    <span>Thời gian</span>
+    <button class="chon-ngay">📅 Hôm nay <b>▾</b></button>
+  </div>
+  <div class="kpis">
+    <div class="kpi">
+      <div class="kpi-icon xanh">💬</div>
+      <div><div class="ten">Tổng hội thoại</div><div class="hang"><span class="so" id="kpi-tong">256</span><em class="chip tang">↑ 12%</em></div></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon luc">🎧</div>
+      <div><div class="ten">Đang xử lý</div><div class="hang"><span class="so" id="kpi-dang">18</span><em class="chip tang">↑ 6%</em></div></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon cam">⏰</div>
+      <div><div class="ten">Chờ phản hồi</div><div class="hang"><span class="so" id="kpi-cho">12</span><em class="chip giam">↓ 20%</em></div></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon xam">✅</div>
+      <div><div class="ten">Đã hoàn thành</div><div class="hang"><span class="so" id="kpi-xong">226</span><em class="chip tang">↑ 15%</em></div></div>
+    </div>
+    <button class="nut-toi" title="Mở rộng">▦</button>
+  </div>
+</header>
+
+<!-- ===== BỐN CỘT ===== -->
+<main class="console">
+
+  <!-- Cột 1: kênh kết nối -->
+  <aside class="cot">
+    <div class="kenh-head"><b>Kênh kết nối</b><button>+ Thêm kênh</button></div>
+    <div class="kenh-list" id="kenh-list"></div>
+    <div class="bot-status">
+      <span>🤖</span>
+      <div><b>Trợ lý Mino</b><span>Đang trực 24/7 · trả lời tự động</span></div>
+      <em class="dot-xanh"></em>
+    </div>
+  </aside>
+
+  <!-- Cột 2: danh sách hội thoại -->
+  <section class="cot">
+    <b class="ds-title">Danh sách hội thoại</b>
+    <div class="tabs" id="tabs"></div>
+    <div class="search">
+      <span style="font-size:12px">🔍</span>
+      <input id="o-tim" placeholder="Tìm kiếm tên, SĐT, nội dung...">
+      <button class="loc" title="Lọc">
+        <svg viewBox="0 0 24 24" width="15" height="15"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5z" fill="none" stroke="#6b7a90" stroke-width="2" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <div class="ds" id="ds"></div>
+  </section>
+
+  <!-- Cột 3: hội thoại -->
+  <section class="cot">
+    <div class="chat-head" id="chat-head"></div>
+    <div class="tin" id="tin"></div>
+    <div class="soan">
+      <div class="soan-tabs">
+        <button class="active" data-mode="tin">Tin nhắn</button>
+        <button data-mode="ghichu">Ghi chú nội bộ</button>
+      </div>
+      <input class="o-soan-lon" id="o-soan" placeholder="Nhập tin nhắn...">
+      <div class="soan-row">
+        <button class="icon" onclick="chenTep()" title="Đính kèm tệp">📎</button>
+        <button class="icon" onclick="chenVaoNhap('😊')" title="Emoji">😊</button>
+        <button class="icon" onclick="chenVaoNhap('Dạ em cảm ơn anh/chị đã quan tâm đến shop ạ! 💜')" title="Mẫu trả lời nhanh">⚡</button>
+        <button class="icon" onclick="taoDonNhanh()" title="Tạo đơn từ hội thoại">🧾</button>
+        <button class="gui" onclick="guiTinAdmin()" title="Gửi">
+          <svg viewBox="0 0 24 24" width="16" height="16"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z" fill="#fff"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cột 4: khách hàng -->
+  <aside class="cot khach" id="khach"></aside>
+</main>
+
+<script>
+/* =========================================================
+   DỮ LIỆU MẪU — hội thoại của Cửa hàng của Mino
+   (seed) + dữ liệu LIVE từ trang bán hàng (localStorage)
+   ========================================================= */
+const KENH_LIST = [
+  {id:'all',   icon:'▦', ten:'Tất cả kênh',          so:256, mau:'#2e6cf6'},
+  {id:'web',   icon:'🌐', ten:'Website Chat',         so:48,  mau:'#2e6cf6'},
+  {id:'fb',    icon:'f',  ten:'Facebook Messenger',   so:65,  badge:5,  mau:'#0084ff',
+   svg:'<svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.14 2 11.25c0 2.91 1.45 5.51 3.72 7.22V22l3.4-1.87c.91.25 1.87.39 2.88.39 5.5 0 10-4.11 10-9.27S17.5 2 12 2zm1.06 12.44-2.55-2.66-4.97 2.66 5.47-5.75 2.55 2.66 4.97-2.66-5.47 5.75z" fill="#fff"/></svg>'},
+  {id:'zalo',  icon:'Z',  ten:'Zalo Official Account',so:52,  badge:3,  mau:'#0180c7'},
+  {id:'insta', icon:'📷', ten:'Instagram',            so:18,
+   mau:'linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)',
+   svg:'<svg viewBox="0 0 24 24"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5" fill="none" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="#fff" stroke-width="2"/><circle cx="17.1" cy="6.9" r="1.3" fill="#fff"/></svg>'},
+  {id:'wa',    icon:'W',  ten:'WhatsApp',             so:12,  mau:'#25d366',
+   svg:'<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.59 15.08L2 22l5.13-1.35A10 10 0 1 0 12 2zm5.4 14.12c-.23.64-1.34 1.24-1.85 1.28-.5.05-.97.23-3.27-.68-2.77-1.09-4.53-3.93-4.67-4.11-.13-.18-1.11-1.48-1.11-2.82 0-1.34.7-2 .95-2.27.25-.28.55-.35.73-.35l.52.01c.17.01.39-.06.61.46.23.55.77 1.9.84 2.04.07.14.11.3.02.48-.09.18-.14.3-.27.46-.14.16-.29.36-.41.48-.14.14-.28.29-.12.56.16.28.72 1.18 1.54 1.91 1.06.94 1.95 1.23 2.22 1.37.28.14.44.11.6-.07.16-.18.69-.8.87-1.07.18-.28.37-.23.62-.14.25.09 1.6.75 1.87.89.28.14.46.21.53.32.07.12.07.68-.16 1.32z" fill="#fff"/></svg>'},
+  {id:'email', icon:'✉', ten:'Email',                so:24,  mau:'#64748b'},
+  {id:'khac',  icon:'⋯', ten:'Khác',                 so:16,  mau:'#94a3b8'},
+];
+const KENH_MAP = Object.fromEntries(KENH_LIST.map(k=>[k.id,k]));
+
+const TAB_LIST = [
+  {id:'tat-ca',  ten:'Tất cả',       so:256},
+  {id:'chua-doc',ten:'Chưa đọc',     so:18},
+  {id:'cho',     ten:'Chờ phản hồi', so:12},
+  {id:'xong',    ten:'Đã xong',      so:null},
+];
+
+const HOI_THOAI = [
+  {
+    id:'ht1', ten:'Nguyễn Thị Mai', kenh:'fb', gio:'10:24', chuaDoc:2, trangThai:'chua-doc', mau:'#f472b6',
+    sdt:'0902 345 678', noi:'TP. Hồ Chí Minh',
+    tin:[
+      {ai:'khach', noi:'Chào shop, mình đang tìm quà tặng Tết cho đối tác của công ty. Shop có combo quà tặng sẵn không ạ?', gio:'10:15'},
+      {ai:'shop',  noi:'Chào chị Mai, cảm ơn chị đã quan tâm đến cửa hàng của Mino ạ. Em gửi chị bảng giá combo quà tặng để chị tham khảo trước nha 🎁', gio:'10:18'},
+      {ai:'shop',  tep:{ten:'Bao_gia_ComboQuaTang_Mino.pdf', kt:'2.4 MB'}, gio:'10:19'},
+      {ai:'khach', noi:'Cảm ơn shop. Bên mình cần 30 combo, gói hộp và gửi tận nơi được không ạ?', gio:'10:21'},
+      {ai:'shop',  noi:'Dạ được nè chị, bên em gói riêng từng hộp kèm thiệp chúc mừng in logo công ty luôn ạ. Chị cho em xin địa chỉ để chốt lịch giao nha!', gio:'10:22'},
+      {ai:'khach', noi:'Địa chỉ: 123 Nguyễn Đình Chiểu, Quận 1, TP.HCM nhé.\nTuần sau bên mình qua xem mẫu được không ạ?', gio:'10:24'},
+    ],
+    khachInfo:{
+      chucVu:'Trưởng bộ phận Hành chính', congTy:'Công ty TNHH ABC',
+      sdt:'0902 345 678', email:'mai.nguyen@abc.vn', diaChi:'123 Nguyễn Đình Chiểu, Q.1, TP.HCM',
+      the:[{ten:'Khách hàng tiềm năng',mau:'xanh'},{ten:'Quà tặng Tết',mau:'cam'}],
+      coHoi:{ten:'Cung cấp 30 combo quà tặng Tết cho công ty', giaTri:'15.000.000 đ',
+             giaiDoan:'Tư vấn giải pháp', trangThai:'Đang xử lý', ngay:'12/10/2026', phuTrach:'Đặng Đình Công'},
+      hoatDong:[
+        {icon:'📄', ten:'Đã gửi báo giá combo', gio:'10:19 · 12/10/2026'},
+        {icon:'💬', ten:'Khách hàng hỏi về đặt sỉ quà tặng', gio:'10:21 · 12/10/2026'},
+        {icon:'➕', ten:'Tạo hội thoại từ Facebook', gio:'10:15 · 12/10/2026'},
+      ],
+    },
+    ghiChu:['Chị Mai ưu tiên giao buổi sáng, gọi trước 1 ngày.'],
+  },
+  {
+    id:'ht2', ten:'Công ty ABC', kenh:'zalo', gio:'09:15', chuaDoc:1, trangThai:'chua-doc', mau:'#60a5fa',
+    sdt:'028 3822 4455', noi:'TP. Hồ Chí Minh',
+    tin:[
+      {ai:'khach', noi:'Chúng tôi quan tâm đến gói quà tặng số lượng cho sự kiện cuối tháng.', gio:'09:12'},
+      {ai:'shop',  noi:'Dạ vâng, bên em gửi anh/chị bảng giá sỉ và catalog mẫu ngay ạ!', gio:'09:15'},
+    ],
+    khachInfo:{
+      chucVu:'Phòng Hành chính', congTy:'Công ty TNHH ABC',
+      sdt:'028 3822 4455', email:'hanhchinh@abc.vn', diaChi:'45 Lê Lợi, Q.1, TP.HCM',
+      the:[{ten:'Khách doanh nghiệp',mau:'xanh'}],
+      coHoi:{ten:'Quà tặng sự kiện nội bộ ~50 phần', giaTri:'12.500.000 đ',
+             giaiDoan:'Tiếp cận ban đầu', trangThai:'Đang xử lý', ngay:'12/10/2026', phuTrach:'Đặng Đình Công'},
+      hoatDong:[
+        {icon:'💬', ten:'Khách nhắn tin qua Zalo OA', gio:'09:12 · 12/10/2026'},
+        {icon:'➕', ten:'Tạo hội thoại từ Zalo', gio:'09:12 · 12/10/2026'},
+      ],
+    },
+    ghiChu:[],
+  },
+  {
+    id:'ht3', ten:'Trần Văn Nam', kenh:'web', gio:'08:42', chuaDoc:0, trangThai:'cho', mau:'#34d399',
+    sdt:'0918 552 013', noi:'TP. Thủ Đức',
+    tin:[
+      {ai:'khach', noi:'Set khăn mặt cotton còn hàng không shop, mình cần giao trước 15/10.', gio:'08:40'},
+      {ai:'bot',   noi:'Dạ còn nha anh! Set khăn mặt cotton 129.000đ, anh đặt đơn trên trang là em ghi đơn liền, nội thành nhận trong ngày đó ạ 🧺', gio:'08:41'},
+    ],
+    khachInfo:{
+      chucVu:'', congTy:'',
+      sdt:'0918 552 013', email:'', diaChi:'KTX ĐH Quốc tế, TP. Thủ Đức',
+      the:[{ten:'Khách hàng mới',mau:'xanh'}],
+      coHoi:null,
+      hoatDong:[
+        {icon:'🤖', ten:'Bot Mino đã tư vấn tự động', gio:'08:41 · 12/10/2026'},
+        {icon:'➕', ten:'Tạo hội thoại từ Website Chat', gio:'08:40 · 12/10/2026'},
+      ],
+    },
+    ghiChu:['Bot trả lời được, chưa cần chủ shop vào.'],
+  },
+  {
+    id:'ht4', ten:'Lê Thị Hương', kenh:'insta', gio:'08:20', chuaDoc:3, trangThai:'chua-doc', mau:'#f59e0b',
+    sdt:'0903 774 268', noi:'Quận 7',
+    tin:[
+      {ai:'khach', noi:'Sản phẩm nến thơm vanilla này hàng thật không ạ?', gio:'08:18'},
+      {ai:'khach', noi:'Mua 2 nến có được freeship không shop?', gio:'08:19'},
+      {ai:'khach', noi:'Alo shop ơi 😊', gio:'08:20'},
+    ],
+    khachInfo:{
+      chucVu:'', congTy:'',
+      sdt:'0903 774 268', email:'', diaChi:'Quận 7, TP.HCM',
+      the:[{ten:'Khách hàng mới',mau:'xanh'}],
+      coHoi:null,
+      hoatDong:[{icon:'➕', ten:'Tạo hội thoại từ Instagram', gio:'08:18 · 12/10/2026'}],
+    },
+    ghiChu:[],
+  },
+  {
+    id:'ht5', ten:'Hoàng Minh', kenh:'wa', gio:'08:05', chuaDoc:0, trangThai:'cho', mau:'#22c55e',
+    sdt:'0977 310 456', noi:'Bình Thạnh',
+    tin:[
+      {ai:'khach', noi:'Gửi bảng giá sỉ giúp tôi với được không?', gio:'08:03'},
+      {ai:'bot',   noi:'Dạ anh để lại sđt + nhu cầu số lượng, chủ shop gọi tư vấn giá sỉ liền trong giờ hành chính ạ 🙏', gio:'08:05'},
+    ],
+    khachInfo:{
+      chucVu:'', congTy:'',
+      sdt:'0977 310 456', email:'', diaChi:'Bình Thạnh, TP.HCM',
+      the:[], coHoi:null,
+      hoatDong:[{icon:'🤖', ten:'Bot Mino đã ghi nhận nhu cầu giá sỉ', gio:'08:05 · 12/10/2026'}],
+    },
+    ghiChu:['Khách quan tâm giá sỉ — cần gọi lại.'],
+  },
+  {
+    id:'ht6', ten:'Công ty XYZ', kenh:'email', gio:'Hôm qua', chuaDoc:0, trangThai:'xong', mau:'#64748b',
+    sdt:'024 6268 1199', noi:'Hà Nội',
+    tin:[
+      {ai:'shop',  noi:'Kính gửi Công ty XYZ, gửi bên mình bảng báo giá combo quà tặng dịp Tết 2027 kèm catalog.', gio:'16:40 · 11/10'},
+      {ai:'khach', noi:'Cảm ơn shop, tôi sẽ trao đổi với team và phản hồi sớm.', gio:'09:30'},
+    ],
+    khachInfo:{
+      chucVu:'Giám đốc', congTy:'Công ty CP XYZ',
+      sdt:'024 6268 1199', email:'contact@xyz.vn', diaChi:'Cầu Giấy, Hà Nội',
+      the:[{ten:'Khách doanh nghiệp',mau:'xanh'},{ten:'Miền Bắc',mau:'cam'}],
+      coHoi:{ten:'Quà tặng Tết cho khách hàng XYZ', giaTri:'20.000.000 đ',
+             giaiDoan:'Chờ phản hồi', trangThai:'Đang xử lý', ngay:'11/10/2026', phuTrach:'Đặng Đình Công'},
+      hoatDong:[
+        {icon:'✉', ten:'Đã gửi email báo giá', gio:'16:40 · 11/10/2026'},
+        {icon:'✉', ten:'Khách phản hồi email', gio:'09:30 · 12/10/2026'},
+      ],
+    },
+    ghiChu:[],
+  },
+  {
+    id:'ht7', ten:'Phạm Thị Lan', kenh:'fb', gio:'11/10', chuaDoc:0, trangThai:'xong', mau:'#a78bfa',
+    sdt:'0905 128 337', noi:'Thanh Hóa',
+    tin:[
+      {ai:'khach', noi:'Cho tôi hỏi chính sách đổi trả với nến thơm ạ?', gio:'15:02'},
+      {ai:'bot',   noi:'Dạ hàng lỗi do vận chuyển shop đổi mới 100% miễn phí trong 7 ngày, chị quay clip lúc mở hàng để được hỗ trợ nhanh nhất nhé 🙏', gio:'15:03'},
+    ],
+    khachInfo:{
+      chucVu:'', congTy:'', sdt:'0905 128 337', email:'', diaChi:'TP. Thanh Hóa',
+      the:[], coHoi:null,
+      hoatDong:[{icon:'🤖', ten:'Bot Mino đã trả lời chính sách đổi trả', gio:'15:03 · 11/10/2026'}],
+    },
+    ghiChu:[],
+  },
+  {
+    id:'ht8', ten:'Vũ Đức Minh', kenh:'zalo', gio:'11/10', chuaDoc:0, trangThai:'xong', mau:'#38bdf8',
+    sdt:'0962 445 901', noi:'Đà Nẵng',
+    tin:[
+      {ai:'khach', noi:'Mình cần đặt quà sự kiện cho hội thảo CNTT khoảng 80 phần, shop nhận đơn sỉ chứ?', gio:'10:11'},
+      {ai:'shop',  noi:'Dạ nhận ạ! Em gửi anh bảng giá sỉ theo từng mốc số lượng, anh tham khảo rồi mình gọi trao đổi thêm nha 📄', gio:'10:20'},
+    ],
+    khachInfo:{
+      chucVu:'Ban tổ chức', congTy:'Nhóm sự kiện CNTT Đà Nẵng',
+      sdt:'0962 445 901', email:'minh.vu@sqcon.vn', diaChi:'Hải Châu, Đà Nẵng',
+      the:[{ten:'Khách doanh nghiệp',mau:'xanh'}],
+      coHoi:{ten:'80 phần quà hội thảo CNTT', giaTri:'9.600.000 đ',
+             giaiDoan:'Tư vấn giải pháp', trangThai:'Đang xử lý', ngay:'11/10/2026', phuTrach:'Đặng Đình Công'},
+      hoatDong:[{icon:'📄', ten:'Đã gửi bảng giá sỉ', gio:'10:20 · 11/10/2026'}],
+    },
+    ghiChu:[],
+  },
+  {
+    id:'ht9', ten:'Nguyễn Văn Long', kenh:'web', gio:'11/10', chuaDoc:0, trangThai:'xong', mau:'#fb7185',
+    sdt:'0356 220 874', noi:'TP. Hồ Chí Minh',
+    tin:[
+      {ai:'khach', noi:'Khi nào shop có chương trình khuyến mãi vậy?', gio:'14:22'},
+      {ai:'bot',   noi:'Dạ combo quà tặng đang giảm còn 399.000đ, mua 2 món freeship nội thành đó anh! 🎁', gio:'14:22'},
+    ],
+    khachInfo:{
+      chucVu:'', congTy:'', sdt:'0356 220 874', email:'', diaChi:'TP.HCM',
+      the:[], coHoi:null,
+      hoatDong:[{icon:'🤖', ten:'Bot Mino đã tư vấn khuyến mãi', gio:'14:22 · 11/10/2026'}],
+    },
+    ghiChu:[],
+  },
+  {
+    id:'ht10', ten:'Cty Thành Phát', kenh:'email', gio:'11/10', chuaDoc:0, trangThai:'xong', mau:'#f97316',
+    sdt:'028 9990 6677', noi:'Bình Dương',
+    tin:[
+      {ai:'shop',  noi:'Gửi công ty bảng catalog quà tặng doanh nghiệp theo yêu cầu ạ.', gio:'11:05'},
+      {ai:'khach', noi:'Đã nhận được tài liệu. Cảm ơn shop!', gio:'13:47'},
+    ],
+    khachInfo:{
+      chucVu:'Phòng Mua hàng', congTy:'Cty TNHH Thành Phát',
+      sdt:'028 9990 6677', email:'muahang@thanhphat.vn', diaChi:'Thủ Dầu Một, Bình Dương',
+      the:[{ten:'Khách doanh nghiệp',mau:'xanh'}], coHoi:null,
+      hoatDong:[{icon:'✉', ten:'Khách xác nhận nhận tài liệu', gio:'13:47 · 11/10/2026'}],
+    },
+    ghiChu:[],
+  },
+];
+
+/* =========================================================
+   TRẠNG THÁI + TIỆN ÍCH
+   ========================================================= */
+let kenhHienTai = 'all';
+let tabHienTai  = 'tat-ca';
+let tuKhoa      = '';
+let htDangXem   = HOI_THOAI[0];
+let cheDoSoan   = 'tin';          // 'tin' | 'ghichu'
+let star = {};                     // id -> true
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function chuCaiAvatar(ten){
+  const t = ten.trim().split(/\s+/).filter(w => /[a-zA-ZÀ-ỹ0-9]/.test(w));
+  const cuoi = t[t.length-1] || "?", truoc = t[t.length-2] || cuoi;
+  return (truoc[0] + cuoi[0]).toUpperCase();
+}
+function avChu(ht){ return ht.avChu || chuCaiAvatar(ht.ten); }
+
+/* =========================================================
+   RENDER CỘT KÊNH
+   ========================================================= */
+function renderKenh(){
+  document.getElementById('kenh-list').innerHTML = KENH_LIST.map(k=>`
+    <div class="kenh-item ${kenhHienTai===k.id?'active':''}" onclick="chonKenh('${k.id}')">
+      <div class="k-ico" style="background:${k.mau}">${k.svg || k.icon}</div>
+      <span class="ten-kenh">${k.ten}</span>
+      ${k.badge ? `<span class="badge-do">${k.badge}</span>` : ''}
+      <span class="so-kenh">${k.so}</span>
+    </div>`).join('');
+}
+function chonKenh(id){ kenhHienTai = id; renderKenh(); renderDS(); }
+
+/* =========================================================
+   RENDER TABS + DANH SÁCH HỘI THOẠI
+   ========================================================= */
+function renderTabs(){
+  document.getElementById('tabs').innerHTML = TAB_LIST.map(t=>`
+    <button class="${tabHienTai===t.id?'active':''}" onclick="chonTab('${t.id}')">${t.ten}${t.so!=null?` (${t.so})`:''}</button>`).join('');
+}
+function chonTab(id){ tabHienTai = id; renderTabs(); renderDS(); }
+
+function dsLoc(){
+  return HOI_THOAI.filter(ht=>{
+    if(kenhHienTai !== 'all' && ht.kenh !== kenhHienTai && !(kenhHienTai==='web' && ht.kenh==='live')) return false;
+    if(tabHienTai === 'chua-doc' && !(ht.chuaDoc > 0)) return false;
+    if(tabHienTai === 'cho'      && ht.trangThai !== 'cho') return false;
+    if(tabHienTai === 'xong'     && ht.trangThai !== 'xong') return false;
+    if(tuKhoa){
+      const k = tuKhoa.toLowerCase();
+      const trongTin = ht.tin.some(t=>(t.noi||'').toLowerCase().includes(k));
+      if(!(ht.ten.toLowerCase().includes(k) || (ht.sdt||'').includes(k) || trongTin)) return false;
+    }
+    return true;
+  });
+}
+
+function renderDS(){
+  const ds = dsLoc();
+  const boThe = chu => String(chu||'').replace(/<[^>]+>/g,'');
+  document.getElementById('ds').innerHTML = ds.length ? ds.map(ht=>{
+    const k = KENH_MAP[ht.kenh] || KENH_MAP.web;
+    const xem = ht.tin.length ? (ht.tin[ht.tin.length-1].tep ? '📎 ' + ht.tin[ht.tin.length-1].tep.ten : boThe(ht.tin[ht.tin.length-1].noi)) : '';
+    return `
+    <div class="ht-item ${htDangXem && htDangXem.id===ht.id?'active':''}" onclick="chonHT('${ht.id}')">
+      <div class="ht-av" style="background:${ht.mau}">${avChu(ht)}${ht.live?'<span class="online"></span>':''}</div>
+      <div class="ht-giua">
+        <div class="ht-ten">${esc(ht.ten)}</div>
+        <div class="ht-xem">${esc(xem)}</div>
+      </div>
+      <div class="ht-phai">
+        <span class="ht-gio">${esc(ht.gio)}</span>
+        <div class="ht-kenh-mini" style="background:${k.mau}">${k.svg || k.icon}</div>
+        ${ht.chuaDoc ? `<span class="badge-do">${ht.chuaDoc}</span>` : ''}
+      </div>
+    </div>`;
+  }).join('') : `<div class="trong">Không có hội thoại nào khớp bộ lọc.</div>`;
+}
+function chonHT(id){
+  htDangXem = HOI_THOAI.find(h=>h.id===id);
+  if(htDangXem && htDangXem.chuaDoc){ htDangXem.chuaDoc = 0; }
+  renderDS(); renderChat(); renderKhach();
+}
+
+/* =========================================================
+   RENDER KHUNG CHAT
+   ========================================================= */
+function renderChat(){
+  const box = document.getElementById('chat-head');
+  if(!htDangXem){ box.innerHTML=''; document.getElementById('tin').innerHTML = `<div class="trong">Chọn một hội thoại để xem.</div>`; return; }
+  const k = KENH_MAP[htDangXem.kenh] || KENH_MAP.web;
+  const khPill    = `<span class="pill luc">👤 Khách hàng</span>`;
+  const coHoiPill = htDangXem.khachInfo?.coHoi ? `<span class="pill">💼 Tạo cơ hội</span>` : '';
+  const donPill   = htDangXem.don ? `<span class="pill cam">🧾 Đơn hàng</span>` : '';
+  box.innerHTML = `
+    <div class="ht-av" style="background:${htDangXem.mau}">${avChu(htDangXem)}${htDangXem.live?'<span class="online"></span>':''}</div>
+    <div>
+      <div class="ch-ten">${esc(htDangXem.ten)} ${khPill} ${coHoiPill} ${donPill} ${htDangXem.live?'<span class="pill" style="background:#e5f6ec;color:#15803d">● Đang trực tuyến</span>':''}</div>
+      <div class="ch-lai">
+        <span class="k-ico" style="background:${k.mau}">${k.svg || k.icon}</span>
+        <span><b style="color:var(--chu)">${k.ten}</b>${htDangXem.sdt?` &nbsp;•&nbsp; ${esc(htDangXem.sdt)}`:''}${htDangXem.noi?` &nbsp;•&nbsp; ${esc(htDangXem.noi)}`:''}</span>
+      </div>
+    </div>
+    <div class="ch-cong-cu">
+      <button title="Tìm trong hội thoại">🔍</button>
+      <button id="btn-star" class="${star[htDangXem.id]?'dang-star':''}" onclick="daoStar()" title="Đánh dấu quan trọng">${star[htDangXem.id]?'★':'☆'}</button>
+      <button title="Thêm">⋯</button>
+    </div>`;
+
+  const tin = document.getElementById('tin');
+  tin.innerHTML = htDangXem.tin.map(t=>{
+    if(t.noiBo) return `<div class="ghi-chu">📌 Ghi chú nội bộ: ${esc(t.noi)}</div>`;
+    if(t.tep) return `
+      <div class="tin-nhan ${t.ai==='khach'?'den':'di'}">
+        <div class="tep">
+          <div class="ico-pdf">PDF</div>
+          <div><b>${esc(t.tep.ten)}</b><small>${esc(t.tep.kt)}</small></div>
+          <span class="tai" title="Tải xuống">⬇</span>
+        </div>
+        <div class="gio-tin">${esc(t.gio)}</div>
+      </div>`;
+    return `
+      <div class="tin-nhan ${t.ai==='khach'?'den':'di'}">
+        <div class="bong">${esc(t.noi)}</div>
+        <div class="gio-tin">${esc(t.gio)}${t.ai!=='khach'?' <span class="tick">✓✓</span>':''}</div>
+      </div>`;
+  }).join('');
+  tin.scrollTop = tin.scrollHeight;
+}
+function daoStar(){
+  star[htDangXem.id] = !star[htDangXem.id];
+  const btn = document.getElementById('btn-star');
+  btn.classList.toggle('dang-star', !!star[htDangXem.id]);
+  btn.textContent = star[htDangXem.id] ? '★' : '☆';
+}
+
+/* =========================================================
+   RENDER PANEL KHÁCH HÀNG
+   ========================================================= */
+function renderKhach(){
+  const el = document.getElementById('khach');
+  if(!htDangXem || !htDangXem.khachInfo){ el.innerHTML = `<div class="trong">Chọn hội thoại để xem thông tin khách.</div>`; return; }
+  const i = htDangXem.khachInfo;
+  const h = htDangXem.coHoiAdmin || i.coHoi;
+  el.innerHTML = `
+    <div class="kh-head"><b>Thông tin khách hàng</b><button onclick="suaKhach()">✏️ Chỉnh sửa</button></div>
+    <div class="kh-dai-dien">
+      <div class="ht-av" style="background:${htDangXem.mau}">${avChu(htDangXem)}</div>
+      <div><div class="ten-hang"><b>${esc(htDangXem.ten)}</b><span class="pill xam">👤 ${htDangXem.don?'Người đặt hàng':'Khách hàng'}</span></div></div>
+    </div>
+    ${i.chucVu ? `<div class="kh-truong"><span class="nhan">Chức vụ</span><span class="gia-tri">${esc(i.chucVu)}</span></div>` : ''}
+    ${i.congTy ? `<div class="kh-truong"><span class="nhan">Công ty</span><span class="gia-tri">${esc(i.congTy)}</span></div>` : ''}
+    <div class="kh-truong"><span class="nhan">Số điện thoại</span><span class="gia-tri">${esc(i.sdt||'—')}<span class="mini">📞 ✏️</span></span></div>
+    <div class="kh-truong"><span class="nhan">Email</span><span class="gia-tri">${esc(i.email||'—')}<span class="mini">✉️</span></span></div>
+    <div class="kh-truong"><span class="nhan">Địa chỉ</span><span class="gia-tri">${esc(i.diaChi||'—')}</span></div>
+
+    <div class="kh-muc"><b>Thẻ gắn</b><button onclick="themThe()">+ Thêm thẻ</button></div>
+    <div class="the-hop" id="the-hop">
+      ${(i.the||[]).map((t,idx)=>`<span class="the ${t.mau}">${esc(t.ten)} <span class="x" onclick="xoaThe(${idx})">×</span></span>`).join('') || '<span style="font-size:12px;color:var(--chu-nhat);padding:0 0 4px 2px">Chưa có thẻ nào</span>'}
+    </div>
+
+    <div class="kh-muc"><b>Cơ hội kinh doanh</b><button onclick="taoCoHoi()">+ Tạo cơ hội</button></div>
+    ${h ? `
+    <div class="co-hoi">
+      <div class="ch-tieu">${esc(h.ten)}</div>
+      <div class="dong"><span class="nhan">Giá trị dự kiến:</span><span class="gt">${esc(h.giaTri)}</span></div>
+      <div class="dong"><span class="nhan">Giai đoạn:</span><span><span class="pill" style="font-size:10.5px;padding:2px 8px">${esc(h.giaiDoan)}</span> <span class="pill cam" style="font-size:10.5px;padding:2px 8px">${esc(h.trangThai||'Đang xử lý')}</span></span></div>
+      <div class="dong"><span class="nhan">Ngày tạo:</span><span class="gt">${esc(h.ngay)}</span></div>
+      <div class="dong"><span class="nhan">Phụ trách:</span><span class="gt">${esc(h.phuTrach)}</span></div>
+    </div>` : `<div style="padding:4px 16px 10px;font-size:12px;color:var(--chu-nhat)">Chưa có cơ hội nào cho khách này.</div>`}
+
+    <div class="kh-muc"><b>Hoạt động gần đây</b><button title="Demo">Xem tất cả</button></div>
+    <div class="hoat-dong">
+      ${(i.hoatDong||[]).map(a=>`
+        <div class="hd-item">
+          <div class="hd-ico">${a.icon}</div>
+          <div><b>${esc(a.ten)}</b><span>${esc(a.gio)}</span></div>
+        </div>`).join('') || '<div style="font-size:12px;color:var(--chu-nhat)">Chưa có hoạt động.</div>'}
+    </div>`;
+}
+function suaKhach(){
+  const ten = prompt('Tên khách hàng:', htDangXem.ten);
+  if(ten && ten.trim()){ htDangXem.ten = ten.trim(); renderDS(); renderChat(); renderKhach(); }
+}
+function themThe(){
+  const ten = prompt('Tên thẻ gắn mới:');
+  if(ten && ten.trim()){
+    htDangXem.khachInfo.the = htDangXem.khachInfo.the || [];
+    htDangXem.khachInfo.the.push({ten:ten.trim(), mau:'xanh'});
+    renderKhach();
+  }
+}
+function xoaThe(idx){ htDangXem.khachInfo.the.splice(idx,1); renderKhach(); }
+function taoCoHoi(){
+  if(htDangXem.coHoiAdmin || htDangXem.khachInfo.coHoi) return;
+  htDangXem.coHoiAdmin = {
+    ten:'Cơ hội từ hội thoại — ' + htDangXem.ten, giaTri:'—',
+    giaiDoan:'Tiếp cận ban đầu', trangThai:'Đang xử lý',
+    ngay:new Date().toLocaleDateString('vi-VN'), phuTrach:'Chủ shop',
+  };
+  renderChat(); renderKhach();
+}
+
+/* =========================================================
+   SOẠN & GỬI TIN (chủ shop trả lời / ghi chú)
+   ========================================================= */
+const oSoan = document.getElementById('o-soan');
+document.querySelectorAll('.soan-tabs button').forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll('.soan-tabs button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    cheDoSoan = b.dataset.mode;
+    oSoan.placeholder = cheDoSoan==='tin' ? 'Nhập tin nhắn...' : 'Ghi chú nội bộ (chỉ chủ shop nhìn thấy)...';
+  };
+});
+function chenVaoNhap(chu){ oSoan.value += chu; oSoan.focus(); }
+function chenTep(){ pushTin({ai:'shop', tep:{ten:'Tai_lieu_Mino.pdf', kt:'1.8 MB'}, gio:gioHienTai()}); }
+function taoDonNhanh(){
+  chenVaoNhap('🧾 Đơn của mình đây nè: ');
+  alert('Mẹo: ghi sản phẩm + số lượng rồi gửi — bot sẽ tổng hợp lại thành đơn giúp bạn.\n(Bản demo: đơn thật từ trang bán hàng tự hiện ở kênh "Website Chat".)');
+}
+function gioHienTai(){
+  return new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+}
+function pushTin(t){
+  htDangXem.tin.push(t);
+  if(htDangXem.trangThai==='chua-doc') htDangXem.trangThai = 'dang';
+  renderChat(); renderDS();
+}
+function guiTinAdmin(){
+  const chu = oSoan.value.trim();
+  if(!chu || !htDangXem) return;
+  oSoan.value = '';
+  if(cheDoSoan === 'ghichu'){
+    htDangXem.ghiChu.push(chu);
+    pushTin({ai:'shop', noiBo:true, noi:chu, gio:gioHienTai()});
+    return;
+  }
+  pushTin({ai:'shop', noi:chu, gio:gioHienTai()});
+  // Nếu là hội thoại LIVE từ widget → đẩy trả lời sang trang bán hàng
+  if(htDangXem.phien){
+    try{
+      const cl = JSON.parse(localStorage.getItem('mino_admin_reply') || '[]');
+      cl.push({phien: htDangXem.phien, noi: chu, gio: gioHienTai()});
+      localStorage.setItem('mino_admin_reply', JSON.stringify(cl.slice(-200)));
+    }catch(e){}
+  }
+}
+oSoan.addEventListener('keydown', e=>{ if(e.key==='Enter') guiTinAdmin(); });
+document.getElementById('o-tim').addEventListener('input', e=>{ tuKhoa = e.target.value.trim(); renderDS(); });
+
+/* =========================================================
+   KPI — số gốc theo ảnh + cộng dồn dữ liệu LIVE
+   ========================================================= */
+const KPI_GOC = {tong:256, dang:18, cho:12, xong:226};
+function capNhatKPI(){
+  const live = HOI_THOAI.filter(h=>h.live);
+  document.getElementById('kpi-tong').textContent = KPI_GOC.tong + live.length;
+  document.getElementById('kpi-dang').textContent = KPI_GOC.dang + live.filter(h=>h.trangThai==='dang').length;
+  document.getElementById('kpi-cho').textContent  = KPI_GOC.cho  + live.filter(h=>h.trangThai==='cho').length;
+  document.getElementById('kpi-xong').textContent = KPI_GOC.xong + live.filter(h=>h.trangThai==='xong').length;
+}
+
+/* =========================================================
+   DỮ LIỆU LIVE TỪ TRANG BÁN HÀNG (index.html)
+   - mino_hoi_thoai: khách chat với bot Mino (gom theo phiên)
+   - donhang: đơn khách đặt qua form
+   - mino_admin_reply: trả lời của chủ shop đẩy ngược về widget
+   ========================================================= */
+function taiLive(){
+  let coMoi = false;
+  try{
+    // 1) Hội thoại widget theo phiên
+    const log = JSON.parse(localStorage.getItem('mino_hoi_thoai') || '[]');
+    const nhom = {};
+    log.forEach(m=>{ (nhom[m.phien] = nhom[m.phien] || []).push(m); });
+    Object.entries(nhom).forEach(([phien, ms])=>{
+      const id = 'live-' + phien;
+      let ht = HOI_THOAI.find(h=>h.id===id);
+      const tin = ms.map(m=>({ai: m.nguoi==='khach'?'khach':'bot', noi:m.noi, gio:m.gio}));
+      const cuoi = ms[ms.length-1];
+      if(!ht){
+        const gioDau = ms[0].gio || gioHienTai();
+        ht = {
+          id, phien, live:true, kenh:'web', gio:gioDau, mau:'#2dd4bf',
+          ten:'Khách online · ' + gioDau, sdt:'', noi:'',
+          avChu:'👤',
+          chuaDoc: cuoi.nguoi==='khach' ? 1 : 0,
+          trangThai: cuoi.nguoi==='khach' ? 'cho' : 'xong',
+          tin:[],
+          khachInfo:{chucVu:'',congTy:'',sdt:'',email:'',diaChi:'',the:[],coHoi:null,
+                     hoatDong:[{icon:'🤖',ten:'Khách chat với bot Mino trên website',gio:gioDau+' · hôm nay'}]},
+          ghiChu:[],
+        };
+        HOI_THOAI.unshift(ht);
+        coMoi = true;
+      }
+      if(ht.tin.length !== tin.length){ ht.tin = tin; coMoi = true; }
+      ht.chuaDoc = cuoi.nguoi==='khach' ? Math.max(ht.chuaDoc,1) : 0;
+      ht.trangThai = cuoi.nguoi==='khach' ? (ht.trangThai==='dang'?'dang':'cho') : 'xong';
+    });
+
+    // 2) Đơn hàng từ form đặt nhanh
+    const catGio  = s => { const m = String(s||'').match(/(\d{1,2}:\d{2}(?::\d{2})?)/); return m ? m[1] : gioHienTai(); };
+    const catNgay = s => { const m = String(s||'').match(/(\d{1,2}\/\d{1,2}\/\d{4})/);   return m ? m[1] : new Date().toLocaleDateString('vi-VN'); };
+    const don = JSON.parse(localStorage.getItem('donhang') || '[]');
+    don.forEach((d,i)=>{
+      const id = 'don-' + i + '-' + (d.thoiGian||'');
+      if(HOI_THOAI.find(h=>h.id===id)) return;
+      const gioDon = catGio(d.thoiGian), ngayDon = catNgay(d.thoiGian);
+      const chiTiet = `Tôi muốn đặt đơn:\n🛒 Sản phẩm: ${d.sanPham}\n👤 ${d.ten} — 📞 ${d.sdt}\n📍 ${d.diaChi}${d.ghiChu?'\n📝 '+d.ghiChu:''}`;
+      HOI_THOAI.unshift({
+        id, live:true, kenh:'web', gio:gioDon,
+        mau:'#10b981', ten:d.ten, sdt:d.sdt, noi:'Đơn qua form đặt nhanh',
+        chuaDoc:1, trangThai:'cho', don:true,
+        tin:[
+          {ai:'khach', noi:chiTiet, gio:gioDon},
+        ],
+        khachInfo:{
+          chucVu:'', congTy:'', sdt:d.sdt, email:'', diaChi:d.diaChi,
+          the:[{ten:'Đơn COD',mau:'cam'}],
+          coHoi:{ten:'Đơn hàng: ' + d.sanPham, giaTri: d.gia ? d.gia.toLocaleString('vi-VN') + ' đ' : '—',
+                 giaiDoan:'Chờ xác nhận', trangThai:'Đang xử lý',
+                 ngay:ngayDon, phuTrach:'Chủ shop'},
+          hoatDong:[
+            {icon:'🧾', ten:'Khách đặt đơn qua form', gio:(d.thoiGian||'')},
+            {icon:'➕', ten:'Tạo hội thoại từ Website Chat', gio:(d.thoiGian||'')},
+          ],
+        },
+        ghiChu:[],
+      });
+      coMoi = true;
+    });
+  }catch(e){ /* localStorage chưa sẵn sàng — bỏ qua */ }
+
+  if(coMoi){ renderDS(); capNhatKPI(); }
+}
+window.addEventListener('storage', taiLive);
+setInterval(taiLive, 3000);
+
+/* =========================================================
+   KHỞI ĐỘNG
+   ========================================================= */
+renderKenh();
+renderTabs();
+renderDS();
+renderChat();
+renderKhach();
+capNhatKPI();
+taiLive();
+</script>
+<!-- nút bot nổi — mở nhanh trang phía khách -->
+<div class="noi-bot">
+  <button class="nut-bot" onclick="window.open('index.html','_blank')" title="Mở bot bán hàng phía khách">🤖<small>BOT</small></button>
+</div>
+
+</body>
+</html>

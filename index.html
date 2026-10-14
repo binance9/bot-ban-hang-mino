@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cửa hàng của Mino — Bán hàng online, AI trả lời khách 24/7</title>
+<meta name="description" content="Trang bán hàng với chatbot tự động trả lời tin nhắn, chốt đơn COD nhanh gọn.">
+<style>
+  :root{
+    --tuody: #2e6cf6;
+    --tuody-dam: #1d4ed8;
+    --hong: #8b5cf6;
+    --nensang: #f5f8ff;
+    --chu-den: #1e2a3b;
+    --chu-mo: #6b7a90;
+    --khung: #e4eaf3;
+    --xanh-la: #10b981;
+    --vang: #f59e0b;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+    color:var(--chu-den);
+    background:var(--nensang);
+    line-height:1.6;
+  }
+  img{max-width:100%;display:block}
+  a{text-decoration:none;color:inherit}
+  .khung-ngoai{max-width:1120px;margin:0 auto;padding:0 20px}
+
+  /* ===== THANH ĐIỀU HƯỚNG ===== */
+  .navbar{
+    position:sticky;top:0;z-index:50;
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--khung);
+  }
+  .navbar .khung-ngoai{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .logo{font-weight:800;font-size:1.25rem;display:flex;align-items:center;gap:8px}
+  .logo .dau{
+    width:34px;height:34px;border-radius:10px;
+    background:linear-gradient(135deg,var(--tuody),var(--hong));
+    color:#fff;display:grid;place-items:center;font-size:1rem;
+  }
+  .navbar nav{display:flex;gap:24px;font-size:.95rem;font-weight:500}
+  .navbar nav a:hover{color:var(--tuody)}
+  .btn{
+    display:inline-block;border:none;cursor:pointer;
+    padding:12px 24px;border-radius:12px;font-weight:700;font-size:1rem;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover{transform:translateY(-2px)}
+  .btn-chinh{
+    background:linear-gradient(135deg,var(--tuody),var(--hong));
+    color:#fff;box-shadow:0 8px 20px rgba(46,108,246,.35);
+  }
+  .btn-vien{background:#fff;color:var(--tuody-dam);border:2px solid var(--tuody)}
+  .btn-nho{padding:8px 18px;font-size:.9rem}
+  @media (max-width:760px){.navbar nav{display:none}}
+
+  /* ===== HERO ===== */
+  .hero{padding:72px 0 56px;position:relative;overflow:hidden}
+  .hero::before{
+    content:"";position:absolute;inset:-40% -20% auto auto;
+    width:520px;height:520px;border-radius:50%;
+    background:radial-gradient(circle,rgba(139,92,246,.16),transparent 70%);
+  }
+  .hero .khung-ngoai{
+    display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;position:relative;
+  }
+  .nhan{display:inline-block;background:#e8f0fe;color:var(--tuody-dam);
+    padding:6px 14px;border-radius:999px;font-size:.85rem;font-weight:700;margin-bottom:16px}
+  .hero h1{font-size:clamp(2rem,4.5vw,3.2rem);line-height:1.15;font-weight:800}
+  .hero h1 .nhan-manh{
+    background:linear-gradient(135deg,var(--tuody),var(--hong));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero p.mo-ta{margin:18px 0 28px;color:var(--chu-mo);font-size:1.1rem;max-width:480px}
+  .hero .cac-cta{display:flex;gap:14px;flex-wrap:wrap}
+  .so-lieu{display:flex;gap:36px;margin-top:36px;flex-wrap:wrap}
+  .so-lieu b{display:block;font-size:1.6rem;color:var(--tuody-dam)}
+  .so-lieu span{font-size:.85rem;color:var(--chu-mo)}
+
+  /* ===== DEMO CHAT TRONG HERO ===== */
+  .hop-chat-demo{
+    background:#fff;border:1px solid var(--khung);border-radius:20px;
+    box-shadow:0 24px 60px rgba(46,108,246,.16);overflow:hidden;
+  }
+  .hop-chat-demo .dau-hop{
+    background:linear-gradient(135deg,var(--tuody),var(--hong));
+    color:#fff;padding:14px 18px;display:flex;align-items:center;gap:10px;
+  }
+  .chan-tron{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.25);
+    display:grid;place-items:center;font-size:1.1rem}
+  .dau-hop b{display:block;font-size:.95rem}
+  .dau-hop small{opacity:.85;font-size:.75rem}
+  .than-hop{padding:18px;display:flex;flex-direction:column;gap:10px;min-height:280px;background:#fdfcff}
+  .tin-nhan{max-width:82%;padding:10px 14px;border-radius:16px;font-size:.9rem;
+    opacity:0;transform:translateY(8px);animation:hien .35s ease forwards}
+  @keyframes hien{to{opacity:1;transform:none}}
+  .tin-khach{align-self:flex-end;background:var(--tuody);color:#fff;border-bottom-right-radius:4px}
+  .tin-bot{align-self:flex-start;background:#eef3fe;color:var(--chu-den);border-bottom-left-radius:4px}
+  .tin-bot .don{
+    margin-top:8px;background:#fff;border:1px dashed var(--tuody);border-radius:10px;
+    padding:8px 10px;font-size:.8rem;color:var(--tuody-dam)
+  }
+  @media (max-width:880px){
+    .hero .khung-ngoai{grid-template-columns:1fr}
+    .hop-chat-demo{max-width:440px;margin:0 auto}
+  }
+
+  /* ===== FOOTER ===== */
+  footer{background:var(--chu-den);color:#c3cde0;padding:48px 0 28px;margin-top:24px}
+  footer .khung-ngoai{display:grid;grid-template-columns:2fr 1fr 1fr;gap:32px}
+  footer h4{color:#fff;margin-bottom:12px;font-size:1rem}
+  footer a:hover{color:#fff}
+  footer .duoi{border-top:1px solid #2b3a55;margin-top:32px;padding-top:20px;
+    text-align:center;font-size:.85rem}
+  @media (max-width:700px){footer .khung-ngoai{grid-template-columns:1fr}}
+
+  /* ===== FORM ĐẶT HÀNG (MODAL) ===== */
+  .phu-nen{
+    position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:90;
+    display:none;place-items:center;padding:20px;
+  }
+  .phu-nen.mo{display:grid}
+  .bang-don{
+    background:#fff;border-radius:20px;padding:28px;width:100%;max-width:420px;
+    max-height:90vh;overflow:auto;position:relative;
+  }
+  .bang-don h3{margin-bottom:4px}
+  .bang-don .sp-chon{color:var(--chu-mo);font-size:.9rem;margin-bottom:16px}
+  .bang-don label{display:block;font-size:.85rem;font-weight:600;margin:12px 0 6px}
+  .bang-don input,.bang-don textarea{
+    width:100%;padding:11px 14px;border:1px solid var(--khung);border-radius:10px;
+    font:inherit;font-size:.95rem;
+  }
+  .bang-don input:focus,.bang-don textarea:focus{outline:2px solid var(--tuody);border-color:transparent}
+  .bang-don .btn{width:100%;margin-top:18px}
+  .tat{position:absolute;top:14px;right:14px;background:none;border:none;
+    font-size:1.3rem;cursor:pointer;color:var(--chu-mo)}
+
+  /* ===== WIDGET CHAT NỔI ===== */
+  .noi-chat{
+    position:fixed;bottom:22px;right:22px;z-index:80;
+  }
+  .nut-chat{
+    width:60px;height:60px;border-radius:50%;border:none;cursor:pointer;
+    background:linear-gradient(135deg,var(--tuody),var(--hong));color:#fff;font-size:1.5rem;
+    box-shadow:0 10px 26px rgba(46,108,246,.45);transition:transform .15s ease;
+  }
+  .nut-chat:hover{transform:scale(1.08)}
+  .cua-so-chat{
+    position:fixed;bottom:96px;right:22px;width:340px;max-width:calc(100vw - 32px);
+    height:460px;background:#fff;border:1px solid var(--khung);border-radius:20px;
+    box-shadow:0 24px 60px rgba(15,23,42,.25);display:none;flex-direction:column;
+    overflow:hidden;z-index:81;
+  }
+  .cua-so-chat.mo{display:flex}
+  .cua-so-chat .dau-hop{cursor:default}
+  .noi-tin{flex:1;padding:14px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;background:#fdfcff}
+  .noi-tin .tin-nhan{animation:hien .3s ease forwards}
+  .goi-y{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 8px;background:#fdfcff}
+  .goi-y button{
+    border:1px solid var(--tuody);color:var(--tuody-dam);background:#fff;
+    border-radius:999px;padding:5px 12px;font-size:.78rem;cursor:pointer;
+  }
+  .goi-y button:hover{background:#e8f0fe}
+  .o-nhap{display:flex;gap:8px;padding:12px;border-top:1px solid var(--khung)}
+  .o-nhap input{flex:1;border:1px solid var(--khung);border-radius:10px;padding:10px 12px;font:inherit;font-size:.9rem}
+  .o-nhap button{border:none;background:linear-gradient(135deg,var(--tuody),var(--hong));
+    color:#fff;border-radius:10px;width:44px;cursor:pointer;font-size:1rem}
+  .dang-go{font-size:.75rem;color:var(--chu-mo);padding:0 16px 4px;background:#fdfcff;height:16px}
+
+  .thong-bao-ok{
+    text-align:center;padding:20px 0;display:none;
+  }
+  .thong-bao-ok .dau{font-size:3rem}
+  .bang-don.da-gui form{display:none}
+  .bang-don.da-gui .thong-bao-ok{display:block}
+</style>
+</head>
+<body>
+
+<!-- ==================== THANH ĐIỀU HƯỚNG ==================== -->
+<header class="navbar">
+  <div class="khung-ngoai">
+    <a class="logo" href="#"><span class="dau">🧁</span><span id="ten-shop">Cửa hàng của Mino</span></a>
+    <nav>
+      <a href="caidat.html">⚙️ Cài đặt</a>
+      <a href="huong-dan.html">Hướng dẫn</a>
+      <a href="admin.html">🖥️ Kênh Chat</a>
+    </nav>
+    <button class="btn btn-chinh btn-nho" onclick="moForm()">Đặt hàng ngay</button>
+  </div>
+</header>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero">
+  <div class="khung-ngoai">
+    <div>
+      <span class="nhan">🤖 Chatbot AI trả lời khách tự động 24/7</span>
+      <h1>Bán hàng không lo <span class="nhan-manh">lỡ một tin nhắn nào</span></h1>
+      <p class="mo-ta">
+        Khách nhắn lúc nửa đêm? Bot trả lời ngay, tư vấn giá, nhận đơn COD —
+        sáng ra anh chỉ việc gói hàng đi bưu tụ.
+      </p>
+      <div class="cac-cta">
+        <button class="btn btn-chinh" onclick="moForm()">🛒 Đặt hàng ngay</button>
+      </div>
+      <div class="so-lieu">
+        <div><b id="so-don">1.200+</b><span>đơn đã giao</span></div>
+        <div><b>&lt; 5 giây</b><span>bot phản hồi</span></div>
+        <div><b>24/7</b><span>luôn trực tin nhắn</span></div>
+      </div>
+    </div>
+
+    <div class="hop-chat-demo" aria-hidden="true">
+      <div class="dau-hop">
+        <div class="chan-tron">🤖</div>
+        <div><b>Trợ lý bán hàng</b><small>Đang hoạt động · trả lời tức thì</small></div>
+      </div>
+      <div class="than-hop" id="demo-chat"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+  <div class="khung-ngoai">
+    <div>
+      <h4><span id="ten-shop-2">Cửa hàng của Mino</span></h4>
+      <p id="mo-ta-footer">Bán hàng online tận tâm — bot trả lời 24/7, đơn COD toàn quốc.</p>
+      <p style="margin-top:10px"><a href="huong-dan.html">📘 Hướng dẫn sử dụng &amp; kết nối FB / Zalo</a></p>
+    </div>
+    <div>
+      <h4>Liên hệ</h4>
+      <p>📞 <span id="sdt-footer">0900 000 000</span></p>
+      <p>💬 Zalo: <span id="zalo-footer">0900000000</span></p>
+      <p id="diachi-footer">Cập nhật địa chỉ trong phần cấu hình</p>
+    </div>
+    <div>
+      <h4>Giờ bán</h4>
+      <p>T2 – CN: 8:00 – 22:00</p>
+      <p>Ngoài giờ bot vẫn trực 👌</p>
+    </div>
+  </div>
+  <div class="duoi">© 2026 <span id="ten-shop-3">Cửa hàng của Mino</span> — Made with 💜</div>
+</footer>
+
+<!-- ==================== MODAL ĐẶT HÀNG ==================== -->
+<div class="phu-nen" id="phu-nen-don" onclick="if(event.target===this)dongForm()">
+  <div class="bang-don" id="bang-don">
+    <button class="tat" onclick="dongForm()">✕</button>
+    <h3>🧾 Đặt đơn nhanh</h3>
+    <p class="sp-chon" id="sp-dang-chon">Sản phẩm: để bot tư vấn</p>
+    <form id="form-don" onsubmit="guiDon(event)">
+      <label>Họ tên *</label>
+      <input required name="ten" placeholder="Nguyễn Văn A">
+      <label>Số điện thoại *</label>
+      <input required name="sdt" type="tel" pattern="[0-9\s+]{9,15}" placeholder="09xx xxx xxx">
+      <label>Địa chỉ nhận hàng *</label>
+      <input required name="diachi" placeholder="Số nhà, đường, phường/xã, tỉnh">
+      <label>Ghi chú</label>
+      <textarea name="ghichu" rows="2" placeholder="Ví dụ: giao giờ hành chính, tặng gói quà…"></textarea>
+      <button class="btn btn-chinh" type="submit">✅ Xác nhận đặt đơn</button>
+    </form>
+    <div class="thong-bao-ok">
+      <div class="dau">🎉</div>
+      <h3>Đã ghi đơn thành công!</h3>
+      <p style="color:var(--chu-mo);font-size:.9rem;margin-top:6px">
+        Bot đã lưu đơn lại. Chủ shop sẽ gọi xác nhận trong vài giờ tới — cảm ơn anh nhiều!
+      </p>
+      <button class="btn btn-vien btn-nho" style="margin-top:14px" onclick="dongForm()">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CHAT BOT NỔI ==================== -->
+<div class="cua-so-chat" id="cua-so-chat">
+  <div class="dau-hop">
+    <div class="chan-tron">🤖</div>
+    <div><b>Trợ lý <span class="ten-bot">Mino</span></b><small>Trả lời tự động · 24/7</small></div>
+  </div>
+  <div class="noi-tin" id="noi-tin-chat"></div>
+  <div class="goi-y" id="goi-y"></div>
+  <div class="dang-go" id="dang-go"></div>
+  <div class="o-nhap">
+    <input id="o-nhap-chat" placeholder="Nhắn gì đó…" onkeydown="if(event.key==='Enter')guiTin()">
+    <button onclick="guiTin()" aria-label="Gửi">➤</button>
+  </div>
+</div>
+<div class="noi-chat">
+  <button class="nut-chat" id="nut-chat" onclick="batTatChat()" aria-label="Mở chat">💬</button>
+</div>
+
+<script>
+/* =========================================================
+   ⚙️ CẤU HÌNH — SỬA CHỈ Ở ĐÂY LÀ ĐỔI CẢ TRANG
+   ========================================================= */
+const CAU_HINH = {
+  tenShop:    "Cửa hàng của Mino",
+  tenBot:     "Mino",                       // tên trợ lý ảo
+  soDienThoai:"0900 000 000",
+  zalo:       "0900000000",
+  diaChi:     "Số 1 Đường Hoa, Phường BV, TP. Hồ Chí Minh",
+  // Sản phẩm: sửa tên, giá, icon/emoji. Có thể thêm bớt thoải mái.
+  sanPham: [
+    { ten:"Set khăn mặt cotton",     gia:129000, giaCu:159000, emoji:"🧺", moTa:"Mềm, thấm nước tốt, đóng hộp quà xinh." },
+    { ten:"Nến thơm vanilla",        gia:185000, giaCu:null,   emoji:"🕯️", moTa:"Cháy 35 giờ, thơm dịu phòng ngủ." },
+    { ten:"Bộ túi tote canvas",      gia:99000,  giaCu:139000, emoji:"👜", moTa:"Vải dày, mặc sức đựng laptop sách vở." },
+    { ten:"Hộp trà hoa sấy",         gia:159000, giaCu:null,   emoji:"🌸", moTa:"8 vị trà hoa, uống đẹp da thư giãn." },
+    { ten:"Sổ tay kế hoạch",         gia:89000,  giaCu:109000, emoji:"📔", moTa:"Giấy dày không lem mực, kèm sticker." },
+    { ten:"Cốc gốm vẽ tay",          gia:145000, giaCu:null,   emoji:"☕", moTa:"Mỗi chiếc một nét vẽ, giữ nhiệt tốt." },
+    { ten:"Dép đi trong nhà",        gia:79000,  giaCu:null,   emoji:"🩴", moTa:"Đế êm, chống trượt, nhiều size." },
+    { ten:"Combo quà tặng",          gia:399000, giaCu:489000, emoji:"🎁", moTa:"Nến + trà + thiệp, gói hộp sẵn." },
+  ],
+  // Hỏi đáp hiển thị dưới trang + chính là "não" của con bot
+  hoiDap: [
+    { khoa:["gia","giá","bao nhiêu","bao nhiu","price"],        traLoi:"Giá từng món anh xem ngay mục “Sản phẩm” trên trang này nha. Combo quà tặng đang giảm còn 399.000đ — mua 2 món freeship nội thành đó! 🎁" },
+    { khoa:["con khong","còn không","con hang khong","còn hàng không","còn hàng","con hang","het hang","hết hàng","stock"], traLoi:"Dạ bên em bán online, món nào anh/chị ưng cứ nhắn tên món — em báo giá + tình trạng hàng liền nha! 🛒" },
+    { khoa:["dat","đặt","đặt hàng","mua","order","chot","chốt"],traLoi:"Đơn đây nè: anh bấm nút “Đặt đơn” hoặc để lại tên + sđt + địa chỉ ngay đây, bot ghi đơn giúp anh liền, chốc chủ shop gọi xác nhận nhé! 🧾" },
+    { khoa:["ship","giao","vận chuyển","bao lâu","khi nào"],    traLoi:"Shop giao toàn quốc nha: nội thành TP.HCM nhận trong ngày, tỉnh khác 2–4 ngày. Đơn từ 399k được miễn phí ship nội thành đó anh! 🚚" },
+    { khoa:["doi","đổi","tra","hoàn","bảo hành"],               traLoi:"Hàng lỗi do vận chuyển shop đổi mới 100% miễn phí trong 7 ngày, anh quay clip khi mở hàng để được hỗ trợ nhanh nhất nhé 🙏" },
+    { khoa:["thanh toan","thanh toán","chuyển khoản","cod"],    traLoi:"Nhận COD (nhận hàng trả tiền) lẫn chuyển khoản đều được nha anh, tuỳ anh chọn cho tiện 😄" },
+    { khoa:["dia chi","địa chỉ","ở đâu"],                       traLoi:"Shop ở Số 1 Đường Hoa, Phường BV, TP.HCM. Anh ghé chơi cũng được, đặt online ship tận nhà cũng vui 😊" },
+    { khoa:["chao","chào","hello","hi","alo"],                  traLoi:"Dạ em chào anh/chị! 🤖 Em là trợ lý của shop, trả lời 24/7. Anh cần hỏi giá, đặt hàng hay kiểm tra đơn, cứ nhắn thoải mái nha!" },
+    { khoa:["cam on","cảm ơn","thanks"],                        traLoi:"Dạ không có gì ạ! Cần gì cứ gọi em, em trực 24/7 mà 💜" },
+  ],
+  traLoiMacDinh: "Dạ câu này em phải nhờ chủ shop trả lời chi tiết hơn ạ 🙏 Anh nhắn sđt hoặc bấm “Đặt đơn” để chủ shop gọi lại cho mình nha! Hoặc hỏi em về giá / ship / đặt hàng nè!",
+};
+/* ============ HẾT CẤU HÌNH — dưới này khỏi đụng ============ */
+
+/* Trang Cài đặt (caidat.html) lưu cấu hình form ở đây — có thì dùng, không thì giữ mặc định */
+try{
+  const CAU_HINH_DA_LUU = JSON.parse(localStorage.getItem("mino_cau_hinh") || "null");
+  if (CAU_HINH_DA_LUU) Object.assign(CAU_HINH, CAU_HINH_DA_LUU);
+}catch(e){}
+
+const VND = n => n.toLocaleString("vi-VN") + "đ";
+
+/* ----- Đổ tên shop vào các chỗ ----- */
+["ten-shop","ten-shop-2","ten-shop-3"].forEach(id => document.getElementById(id).textContent = CAU_HINH.tenShop);
+document.getElementById("sdt-footer").textContent = CAU_HINH.soDienThoai;
+document.getElementById("zalo-footer").textContent = CAU_HINH.zalo;
+document.getElementById("diachi-footer").textContent = CAU_HINH.diaChi;
+document.querySelectorAll(".ten-bot").forEach(e => e.textContent = CAU_HINH.tenBot);
+
+/* ----- Demo chat trong hero (tự chạy) ----- */
+const kichBanDemo = [
+  { ai:"khach", noi:"Cho hỏi combo quà tặng còn không shop ơi?" },
+  { ai:"bot",   noi:"Dạ còn nha anh! Combo nến + trà hoa + thiệp đang giảm còn <b>399.000đ</b>, gói hộp quà sẵn 💜" },
+  { ai:"khach", noi:"Ok đặt cho mình 1 combo, giao Q.7" },
+  { ai:"bot",   noi:"Dạ bot ghi đơn giúp anh liền nè 🧾", don:"📦 Đơn #1042 — Combo quà tặng ×1<br>👤 Khách ở Q.7 · COD<br>⏱ Chủ shop sẽ gọi xác nhận" },
+];
+const demoHop = document.getElementById("demo-chat");
+let buocDemo = 0;
+function chayDemo(){
+  if(buocDemo >= kichBanDemo.length){ setTimeout(()=>{demoHop.innerHTML=""; buocDemo=0; chayDemo();}, 6000); return; }
+  const b = kichBanDemo[buocDemo++];
+  demoHop.insertAdjacentHTML("beforeend",
+    `<div class="tin-nhan ${b.ai==="khach"?"tin-khach":"tin-bot"}">${b.noi}${b.don?`<div class="don">${b.don}</div>`:""}</div>`);
+  demoHop.scrollTop = demoHop.scrollHeight;
+  setTimeout(chayDemo, 1900);
+}
+chayDemo();
+
+/* ----- Modal đặt hàng ----- */
+let sanPhamDangChon = null;
+function moForm(i){
+  sanPhamDangChon = (typeof i === "number") ? CAU_HINH.sanPham[i] : null;
+  document.getElementById("sp-dang-chon").textContent =
+    "Sản phẩm: " + (sanPhamDangChon ? sanPhamDangChon.ten + " — " + VND(sanPhamDangChon.gia) : "để bot tư vấn sau");
+  const bang = document.getElementById("bang-don");
+  bang.classList.remove("da-gui");
+  document.getElementById("phu-nen-don").classList.add("mo");
+}
+function dongForm(){
+  document.getElementById("phu-nen-don").classList.remove("mo");
+}
+function guiDon(e){
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const don = {
+    thoiGian: new Date().toLocaleString("vi-VN"),
+    sanPham: sanPhamDangChon ? sanPhamDangChon.ten : "(bot tư vấn)",
+    gia: sanPhamDangChon ? sanPhamDangChon.gia : null,
+    ten: f.get("ten"), sdt: f.get("sdt"), diaChi: f.get("diachi"), ghiChu: f.get("ghichu"),
+  };
+  // Đơn lưu ngay trên máy (localStorage) — mở DevTools → Application → Local Storage để xem
+  const stt = JSON.parse(localStorage.getItem("donhang") || "[]");
+  stt.push(don);
+  localStorage.setItem("donhang", JSON.stringify(stt));
+  document.getElementById("bang-don").classList.add("da-gui");
+}
+
+/* ----- Chat bot nổi ----- */
+const cuaSo = document.getElementById("cua-so-chat");
+const noiTin = document.getElementById("noi-tin-chat");
+const oNhap  = document.getElementById("o-nhap-chat");
+const dangGo = document.getElementById("dang-go");
+let daMoLanDau = false;
+
+/* Nhớ hội thoại qua lần tải lại trang — khách reload vẫn thấy bot đã nói gì */
+try{
+  const cu = JSON.parse(localStorage.getItem("mino_widget_tin") || "[]");
+  cu.forEach(m => {
+    noiTin.insertAdjacentHTML("beforeend",
+      `<div class="tin-nhan ${m.nguoi==="khach"?"tin-khach":"tin-bot"}">${m.noi}</div>`);
+  });
+  noiTin.scrollTop = noiTin.scrollHeight;
+}catch(e){}
+
+/* ----- Cầu nối sang Kênh Chat (admin.html): ghi hội thoại + nhận trả lời chủ shop ----- */
+const PHIEN = "P" + Date.now();
+function logHoiThoai(nguoi, noi){
+  try{
+    const stt = JSON.parse(localStorage.getItem("mino_hoi_thoai") || "[]");
+    stt.push({phien: PHIEN, nguoi: nguoi, noi: noi,
+      gio: new Date().toLocaleTimeString("vi-VN", {hour:"2-digit", minute:"2-digit"})});
+    localStorage.setItem("mino_hoi_thoai", JSON.stringify(stt.slice(-300)));
+  }catch(e){}
+}
+setInterval(()=>{
+  try{
+    const cl = JSON.parse(localStorage.getItem("mino_admin_reply") || "[]");
+    let coMoi = false;
+    cl.forEach(c=>{
+      if(c.phien === PHIEN && !c.daHien){
+        coMoi = true; c.daHien = true;
+        themTin("bot", `👑 <b>Chủ shop</b><br>${c.noi}`);
+      }
+    });
+    if(coMoi) localStorage.setItem("mino_admin_reply", JSON.stringify(cl.slice(-200)));
+  }catch(e){}
+}, 2000);
+
+function themTin(nguoi, noi){
+  noiTin.insertAdjacentHTML("beforeend",
+    `<div class="tin-nhan ${nguoi==="khach"?"tin-khach":"tin-bot"}">${noi}</div>`);
+  noiTin.scrollTop = noiTin.scrollHeight;
+  try{
+    const stt = JSON.parse(localStorage.getItem("mino_widget_tin") || "[]");
+    stt.push({nguoi, noi});
+    localStorage.setItem("mino_widget_tin", JSON.stringify(stt.slice(-100)));
+  }catch(e){}
+}
+function batTatChat(){
+  const mo = cuaSo.classList.toggle("mo");
+  document.getElementById("nut-chat").textContent = mo ? "✕" : "💬";
+  if(mo && !daMoLanDau){
+    daMoLanDau = true;
+    if(noiTin.children.length === 0){
+      setTimeout(()=>themTin("bot",
+        `Dạ em chào anh/chị! 🤖 Em là ${CAU_HINH.tenBot}, trợ lý của ${CAU_HINH.tenShop}. Anh cần hỏi <b>giá</b>, cách <b>đặt hàng</b> hay <b>ship</b> thế nào nè?`), 400);
+    }
+    taoGoiY();
+  }
+}
+function taoGoiY(){
+  const goi = ["Xem giá","Đặt hàng","Ship thế nào?","Đổi trả ra sao?"];
+  document.getElementById("goi-y").innerHTML =
+    goi.map(g=>`<button onclick="guiTinTu('${g}')">${g}</button>`).join("");
+}
+function botTraLoi(cauHoi){
+  const chu = cauHoi.toLowerCase();
+  let noiDap = null;
+
+  // 1) Có nhắc tên sản phẩm → báo giá đúng món đó (đủ cả hỏi giá lẫn hỏi còn hàng)
+  const sp = CAU_HINH.sanPham.find(p => p.ten.toLowerCase().split(/\s+/)
+    .some(t => t.length >= 3 && chu.includes(t)));
+  if (sp) {
+    noiDap = `Dạ món ${sp.emoji} <b>${sp.ten}</b> bên em còn hàng nha, giá <b>${VND(sp.gia)}</b> — ${sp.moTa} Anh/chị bấm “Đặt đơn” hoặc để lại sđt là em ghi đơn liền đó! 🧾`;
+  }
+
+  // 2) Không nhắc món nào → hỏi theo bảng từ khóa (giá, ship, đặt hàng, còn hàng…)
+  if (!noiDap) {
+    const dap = CAU_HINH.hoiDap.find(hd => hd.khoa.some(k => chu.includes(k)));
+    if (dap) noiDap = dap.traLoi;
+  }
+
+  // 3) Còn lại → lời nhắn mặc định nhờ chủ shop
+  if (!noiDap) noiDap = CAU_HINH.traLoiMacDinh;
+
+  dangGo.textContent = CAU_HINH.tenBot + " đang gõ…";
+  setTimeout(()=>{
+    dangGo.textContent = "";
+    themTin("bot", noiDap);
+    logHoiThoai("bot", noiDap);
+  }, 700 + Math.random()*600);
+}
+function guiTinTu(chu){ oNhap.value = chu; guiTin(); }
+function guiTin(){
+  const chu = oNhap.value.trim();
+  if(!chu) return;
+  themTin("khach", chu);
+  logHoiThoai("khach", chu);
+  oNhap.value = "";
+  botTraLoi(chu);
+}
+</script>
+</body>
+</html>

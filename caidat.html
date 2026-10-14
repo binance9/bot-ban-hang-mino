@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cài đặt — Cửa hàng của Mino</title>
+<meta name="description" content="Điền thông tin shop, món bán, kịch bản bot — bấm Lưu là chạy. Không cần biết code.">
+<style>
+  :root{
+    --bg:#f5f8ff; --card:#fff; --vien:#e4eaf3;
+    --chu:#1e2a3b; --mo:#6b7a90;
+    --xanh:#2e6cf6; --xanh-dam:#1d4ed8; --xanh-nen:#e8f0fe;
+    --tim:#8b5cf6; --tim-nen:#ede9fe;
+    --luc:#16a34a; --luc-nen:#e5f6ec;
+    --cam-nen:#fdf1dd; --cam-chu:#b45309;
+    --do:#ef4444; --toi:#1f2b45;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Inter","Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+    background:var(--bg);color:var(--chu);line-height:1.6;font-size:15.5px}
+  a{color:var(--xanh-dam);text-decoration:none}
+  .khung{max-width:860px;margin:0 auto;padding:0 20px}
+
+  .top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--vien)}
+  .top .khung{display:flex;align-items:center;gap:12px;height:60px}
+  .logo{font-weight:800;display:flex;align-items:center;gap:8px;color:var(--chu)}
+  .logo .dau{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--xanh),var(--tim));
+    color:#fff;display:grid;place-items:center;font-size:15px}
+  .top nav{margin-left:auto;display:flex;gap:18px;font-size:.92rem;font-weight:600}
+  .top nav a{color:var(--mo)}
+  .top nav a:hover{color:var(--xanh)}
+
+  .hero{text-align:center;padding:34px 0 8px}
+  .hero h1{font-size:1.7rem;font-weight:800}
+  .hero p{color:var(--mo);margin-top:6px}
+
+  .card{background:var(--card);border:1px solid var(--vien);border-radius:18px;
+    padding:24px 26px;margin:18px 0;scroll-margin-top:76px}
+  .card h2{font-size:1.15rem;display:flex;align-items:center;gap:10px;margin-bottom:4px}
+  .card h2 .so{width:30px;height:30px;border-radius:9px;flex:none;
+    background:linear-gradient(135deg,var(--xanh),var(--tim));color:#fff;
+    display:grid;place-items:center;font-size:.9rem}
+  .card .goi-y{color:var(--mo);font-size:.9rem;margin-bottom:14px}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media (max-width:640px){.grid2{grid-template-columns:1fr}}
+  label{display:block;font-weight:700;font-size:.88rem;margin:10px 0 5px}
+  input[type=text],input[type=number],textarea{
+    width:100%;padding:10px 13px;border:1px solid var(--vien);border-radius:10px;
+    font:inherit;font-size:.95rem;background:#fbfcff}
+  input:focus,textarea:focus{outline:2px solid var(--xanh);border-color:transparent}
+  textarea{resize:vertical}
+  .o-nho input{padding:8px 10px;font-size:.9rem}
+
+  .hang{display:grid;gap:8px;align-items:start;background:#f8faff;border:1px solid var(--vien);
+    border-radius:12px;padding:10px;margin-bottom:10px}
+  .hang-sp{grid-template-columns:64px 1.4fr .9fr 1.6fr 36px}
+  .hang-hd{grid-template-columns:1.2fr 2fr 36px}
+  @media (max-width:640px){.hang-sp,.hang-hd{grid-template-columns:1fr 36px}
+    .hang-sp .mo-rong,.hang-hd .mo-rong{grid-column:1/-1}}
+  .hang .x{width:34px;height:34px;border-radius:9px;border:none;background:#fdecec;
+    color:var(--do);font-size:15px;cursor:pointer;justify-self:end}
+  .hang .x:hover{background:#fbdddd}
+  .them{width:100%;padding:10px;border:1.5px dashed var(--xanh);border-radius:12px;
+    background:none;color:var(--xanh-dam);font-weight:700;cursor:pointer;font-size:.92rem}
+  .them:hover{background:var(--xanh-nen)}
+
+  .hanh-dong{position:sticky;bottom:14px;display:flex;gap:12px;margin-top:6px}
+  .nut-luu{flex:1;padding:15px;border:none;border-radius:14px;cursor:pointer;
+    background:linear-gradient(135deg,var(--xanh),var(--tim));color:#fff;
+    font-size:1.05rem;font-weight:800;box-shadow:0 10px 24px rgba(46,108,246,.4)}
+  .nut-luu:hover{filter:brightness(1.06)}
+  .nut-mac-dinh{padding:15px 20px;border-radius:14px;border:1px solid var(--vien);
+    background:#fff;color:var(--mo);font-weight:700;cursor:pointer;font-size:.9rem}
+  .nut-mac-dinh:hover{color:var(--do);border-color:var(--do)}
+
+  .thong-bao{display:none;background:var(--luc-nen);color:#14532d;border-radius:12px;
+    padding:12px 16px;font-weight:700;margin-top:14px;text-align:center}
+  .thong-bao.hien{display:block}
+
+  .kenh{display:flex;gap:14px;align-items:flex-start;background:#f8faff;border:1px solid var(--vien);
+    border-radius:14px;padding:16px 18px;margin-bottom:12px}
+  .kenh .ico{width:44px;height:44px;border-radius:12px;flex:none;display:grid;place-items:center;
+    font-size:20px;color:#fff;background:var(--xanh)}
+  .kenh b{display:block;font-size:.98rem}
+  .kenh small{color:var(--mo)}
+  .kenh .buoc-ngan{margin:8px 0 0 0;padding-left:18px;font-size:.9rem}
+  .kenh .buoc-ngan li{margin:3px 0}
+  .kenh .nut-ngoai{display:inline-block;margin-top:8px;background:var(--xanh-nen);color:var(--xanh-dam);
+    font-weight:700;font-size:.85rem;border-radius:99px;padding:6px 14px}
+  .kenh .nut-ngoai:hover{background:#dbe8ff}
+  .trang-thai{margin-left:auto;flex:none;font-size:.8rem;font-weight:800;border-radius:99px;padding:5px 12px}
+  .trang-thai.dang{background:var(--luc-nen);color:#15803d}
+  .trang-thai.cho{background:var(--cam-nen);color:var(--cam-chu)}
+
+  footer{background:var(--toi);color:#c3cde0;text-align:center;padding:22px 0;margin-top:30px;font-size:.9rem}
+  footer a{color:#fff}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="khung">
+    <a class="logo" href="index.html"><span class="dau">🧁</span>Cửa hàng của Mino</a>
+    <nav>
+      <a href="index.html">Trang bán hàng</a>
+      <a href="admin.html">Kênh Chat</a>
+      <a href="huong-dan.html">Hướng dẫn</a>
+    </nav>
+  </div>
+</header>
+
+<div class="khung">
+
+  <div class="hero">
+    <h1>⚙️ Cài đặt shop</h1>
+    <p>Điền thông tin → bấm <b>Lưu</b> → mở lại trang bán hàng là bot nói theo mình. <b>Không cần đụng vào code.</b></p>
+  </div>
+
+  <!-- ===== 1. THÔNG TIN SHOP ===== -->
+  <div class="card">
+    <h2><span class="so">1</span>Thông tin shop</h2>
+    <p class="goi-y">Bỏ trống ô nào tức là giữ chữ mặc định trong file.</p>
+    <div class="grid2">
+      <div><label>Tên shop</label><input type="text" id="ten-shop" placeholder="VD: Quán bánh của Lan"></div>
+      <div><label>Tên trợ lý ảo (bot)</label><input type="text" id="ten-bot" placeholder="VD: Lan"></div>
+      <div><label>Số điện thoại</label><input type="text" id="sdt" placeholder="VD: 0912 345 678"></div>
+      <div><label>Zalo</label><input type="text" id="zalo" placeholder="VD: 0912345678"></div>
+    </div>
+    <label>Địa chỉ</label>
+    <input type="text" id="dia-chi" placeholder="VD: 12 Nguyễn Huệ, Q.1, TP.HCM">
+  </div>
+
+  <!-- ===== 2. MÓN HÀNG ===== -->
+  <div class="card">
+    <h2><span class="so">2</span>Món hàng bán</h2>
+    <p class="goi-y">Bot đọc danh sách này để báo giá — khách nhắn tên món là bot tự trả. Thêm bao nhiêu cũng được.</p>
+    <div id="danh-sach-sp"></div>
+    <button class="them" onclick="themHang()">＋ Thêm món</button>
+  </div>
+
+  <!-- ===== 3. KỊCH BẢN BOT ===== -->
+  <div class="card">
+    <h2><span class="so">3</span>Kịch bản trả lời của bot</h2>
+    <p class="goi-y">Khách nhắn chứa <b>từ khóa</b> → bot trả đúng <b>câu trả lời</b>. Từ khóa ghi cách nhau bằng dấu phẩy.</p>
+    <div id="danh-sach-hd"></div>
+    <button class="them" onclick="themHD()">＋ Thêm kịch bản</button>
+    <label style="margin-top:16px">Câu trả lời khi bot không hiểu gì</label>
+    <textarea id="tra-loi-mac-dinh" rows="2" placeholder="VD: Dạ câu này em nhờ chủ shop trả lời, anh/chị để lại sđt nha 🙏"></textarea>
+  </div>
+
+  <div class="thong-bao" id="thong-bao">✅ Đã lưu! Mở (hoặc F5) trang bán hàng để thấy thay đổi.</div>
+
+  <div class="hanh-dong">
+    <button class="nut-mac-dinh" onclick="khoiPhuc()">↺ Khôi phục mặc định</button>
+    <button class="nut-luu" onclick="luu()">💾 Lưu cài đặt</button>
+  </div>
+
+  <!-- ===== 4. KẾT NỐI KÊNH ===== -->
+  <div class="card" style="margin-top:26px">
+    <h2><span class="so">4</span>Kết nối kênh chat</h2>
+    <p class="goi-y">Mỗi kênh là một chỗ khách nhắn tin vào. Kênh web đã chạy sẵn; Messenger/Zalo làm theo thẻ.</p>
+
+    <div class="kenh">
+      <div class="ico">🌐</div>
+      <div>
+        <b>Website Chat — bot Mino</b>
+        <small>Khách chat ngay trên trang bán hàng, tự động 24/7.</small>
+      </div>
+      <span class="trang-thai dang">✅ Đang hoạt động</span>
+    </div>
+
+    <div class="kenh">
+      <div class="ico" style="background:#0084ff">💬</div>
+      <div style="flex:1">
+        <b>Facebook Messenger — qua AhaChat (miễn phí, không cần code)</b>
+        <small>Cách dễ nhất cho người mới, làm 1 lần ~10 phút:</small>
+        <ol class="buoc-ngan">
+          <li>Vào <b>ahachat.com</b> → đăng nhập bằng Facebook.</li>
+          <li>Bấm <b>Kết nối trang</b> → chọn fanpage → đồng ý quyền.</li>
+          <li>Tạo kịch bản <b>trả lời theo từ khóa</b> — chép từ khóa &amp; câu trả lời từ phần 3 phía trên vào.</li>
+          <li>Bấm <b>Bật / Live</b> → nhắn thử fanpage.</li>
+        </ol>
+        <a class="nut-ngoai" href="https://ahachat.com" target="_blank" rel="noopener">Mở ahachat.com ↗</a>
+      </div>
+      <span class="trang-thai cho">Chưa nối</span>
+    </div>
+
+    <div class="kenh">
+      <div class="ico" style="background:#0180c7">Z</div>
+      <div style="flex:1">
+        <b>Zalo Official Account — qua AhaChat (miễn phí, không cần code)</b>
+        <small>Sau khi có OA, kết nối y hệt Messenger:</small>
+        <ol class="buoc-ngan">
+          <li>Tạo Official Account tại <b>oa.zalo.me</b> (đăng nhập Zalo → Tạo OA).</li>
+          <li>Vào AhaChat → <b>Kết nối Zalo</b> → chọn OA của mình.</li>
+          <li>Dựng kịch bản từ khóa như trên → bật live.</li>
+        </ol>
+        <a class="nut-ngoai" href="https://oa.zalo.me" target="_blank" rel="noopener">Mở oa.zalo.me ↗</a>
+      </div>
+      <span class="trang-thai cho">Chưa nối</span>
+    </div>
+
+    <div class="note" style="background:var(--xanh-nen);border-radius:12px;padding:12px 16px;font-size:.9rem">
+      📘 Muốn nối <b>bằng API chính chủ</b> (webhook Meta / Zalo Open API, có code mẫu chép được): mở
+      <a href="huong-dan.html">trang Hướng dẫn</a> → phần "Phần kỹ thuật".
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="khung">Cửa hàng của Mino — <a href="index.html">Trang bán hàng</a> · <a href="admin.html">Kênh Chat</a> · <a href="huong-dan.html">Hướng dẫn</a></div>
+</footer>
+
+<script>
+/* ===== Nạp cấu hình đang lưu (nếu có) ===== */
+let CAU_DAT = {};
+try{ CAU_DAT = JSON.parse(localStorage.getItem("mino_cau_hinh") || "{}"); }catch(e){}
+
+/* ===== Hàng món hàng ===== */
+function hangSP(sp){
+  sp = sp || {};
+  const div = document.createElement("div");
+  div.className = "hang hang-sp";
+  div.innerHTML = `
+    <input type="text" placeholder="🎁" class="f-emoji" value="${sp.emoji||""}">
+    <input type="text" placeholder="Tên món (VD: Nến thơm vanilla)" class="f-ten" value="${sp.ten||""}">
+    <input type="number" placeholder="Giá (VD: 185000)" class="f-gia" value="${sp.gia||""}">
+    <input type="text" placeholder="Mô tả ngắn" class="f-mota mo-rong" value="${sp.moTa||""}">
+    <button class="x" onclick="this.parentElement.remove()" title="Xóa món">✕</button>`;
+  return div;
+}
+function themHang(sp){ document.getElementById("danh-sach-sp").appendChild(hangSP(sp)); }
+
+/* ===== Hàng kịch bản hỏi–đáp ===== */
+function hangHD(hd){
+  hd = hd || {};
+  const div = document.createElement("div");
+  div.className = "hang hang-hd";
+  div.innerHTML = `
+    <input type="text" placeholder="Từ khóa, cách nhau bằng dấu phẩy (VD: giá, bao nhiêu)" class="f-khoa" value="${(hd.khoa||[]).join(", ")}">
+    <textarea rows="2" placeholder="Câu bot trả lời khi khách hỏi" class="f-traloi mo-rong">${hd.traLoi||""}</textarea>
+    <button class="x" onclick="this.parentElement.remove()" title="Xóa kịch bản">✕</button>`;
+  return div;
+}
+function themHD(hd){ document.getElementById("danh-sach-hd").appendChild(hangHD(hd)); }
+
+/* ===== Nạp dữ liệu đang lưu vào form ===== */
+(function nap(){
+  (CAU_DAT.sanPham || [{}]).forEach(sp => themHang(sp));
+  (CAU_DAT.hoiDap  || [{}]).forEach(hd => themHD(hd));
+  if(CAU_DAT.tenShop)      document.getElementById("ten-shop").value = CAU_DAT.tenShop;
+  if(CAU_DAT.tenBot)       document.getElementById("ten-bot").value = CAU_DAT.tenBot;
+  if(CAU_DAT.soDienThoai)  document.getElementById("sdt").value = CAU_DAT.soDienThoai;
+  if(CAU_DAT.zalo)         document.getElementById("zalo").value = CAU_DAT.zalo;
+  if(CAU_DAT.diaChi)       document.getElementById("dia-chi").value = CAU_DAT.diaChi;
+  if(CAU_DAT.traLoiMacDinh)document.getElementById("tra-loi-mac-dinh").value = CAU_DAT.traLoiMacDinh;
+})();
+
+/* ===== Lưu ===== */
+function luu(){
+  const cauHinh = {};
+  const gan = (khoaNho, id) => {
+    const gtri = document.getElementById(id).value.trim();
+    if (gtri) cauHinh[khoaNho] = gtri;
+  };
+  gan("tenShop","ten-shop"); gan("tenBot","ten-bot");
+  gan("soDienThoai","sdt");  gan("zalo","zalo"); gan("diaChi","dia-chi");
+
+  const sp = [...document.querySelectorAll("#danh-sach-sp .hang")].map(h => ({
+    emoji: h.querySelector(".f-emoji").value.trim(),
+    ten:   h.querySelector(".f-ten").value.trim(),
+    gia:   Number(h.querySelector(".f-gia").value) || 0,
+    moTa:  h.querySelector(".f-mota").value.trim(),
+  })).filter(s => s.ten && s.gia > 0);
+  if (sp.length) cauHinh.sanPham = sp;
+
+  const hd = [...document.querySelectorAll("#danh-sach-hd .hang")].map(h => ({
+    khoa:   h.querySelector(".f-khoa").value.split(",").map(k => k.trim().toLowerCase()).filter(Boolean),
+    traLoi: h.querySelector(".f-traloi").value.trim(),
+  })).filter(h => h.khoa.length && h.traLoi);
+  if (hd.length) cauHinh.hoiDap = hd;
+
+  const macDinh = document.getElementById("tra-loi-mac-dinh").value.trim();
+  if (macDinh) cauHinh.traLoiMacDinh = macDinh;
+
+  try{
+    if (Object.keys(cauHinh).length)
+      localStorage.setItem("mino_cau_hinh", JSON.stringify(cauHinh));
+    else
+      localStorage.removeItem("mino_cau_hinh");
+  }catch(e){}
+
+  const tb = document.getElementById("thong-bao");
+  tb.classList.add("hien");
+  setTimeout(()=>tb.classList.remove("hien"), 3500);
+}
+
+/* ===== Khôi phục mặc định ===== */
+function khoiPhuc(){
+  if (!confirm("Xóa cài đặt đã lưu, trả về mặc định trong file?")) return;
+  try{ localStorage.removeItem("mino_cau_hinh"); }catch(e){}
+  location.reload();
+}
+</script>
+</body>
+</html>
