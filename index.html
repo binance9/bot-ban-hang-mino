@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cửa hàng của Mino — Bán hàng online, AI trả lời khách 24/7</title>
 <meta name="description" content="Trang bán hàng với chatbot tự động trả lời tin nhắn, chốt đơn COD nhanh gọn.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧁</text></svg>">
 <style>
   :root{
     --tuody: #2e6cf6;
@@ -110,6 +111,24 @@
     .hop-chat-demo{max-width:440px;margin:0 auto}
   }
 
+  /* ===== SẢN PHẨM ===== */
+  .khu-sp{padding:56px 0 30px}
+  .tieu-de-giua{text-align:center;margin-bottom:28px}
+  .tieu-de-giua h2{font-size:clamp(1.5rem,3vw,2.2rem);font-weight:800}
+  .tieu-de-giua p{color:var(--chu-mo);margin-top:6px}
+  .loi-sp{display:grid;grid-template-columns:repeat(auto-fill,minmax(238px,1fr));gap:18px}
+  .the-sp{background:#fff;border:1px solid var(--khung);border-radius:18px;padding:18px;
+    display:flex;flex-direction:column;gap:8px;
+    transition:transform .15s ease, box-shadow .15s ease}
+  .the-sp:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(46,108,246,.14)}
+  .the-sp .emoji{font-size:2.2rem;line-height:1}
+  .the-sp b{font-size:1.02rem}
+  .the-sp .mo-ta{color:var(--chu-mo);font-size:.85rem;flex:1}
+  .the-sp .gia{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .the-sp .gia b{color:var(--tuody-dam);font-size:1.15rem}
+  .the-sp .gia s{color:var(--chu-mo);font-size:.85rem}
+  .the-sp .btn{margin-top:6px}
+
   /* ===== FOOTER ===== */
   footer{background:var(--chu-den);color:#c3cde0;padding:48px 0 28px;margin-top:24px}
   footer .khung-ngoai{display:grid;grid-template-columns:2fr 1fr 1fr;gap:32px}
@@ -188,6 +207,7 @@
   <div class="khung-ngoai">
     <a class="logo" href="#"><span class="dau">🧁</span><span id="ten-shop">Cửa hàng của Mino</span></a>
     <nav>
+      <a href="#san-pham">🛍️ Sản phẩm</a>
       <a href="caidat.html">⚙️ Cài đặt</a>
       <a href="huong-dan.html">Hướng dẫn</a>
       <a href="admin.html">🖥️ Kênh Chat</a>
@@ -223,6 +243,17 @@
       </div>
       <div class="than-hop" id="demo-chat"></div>
     </div>
+  </div>
+</section>
+
+<!-- ==================== SẢN PHẨM ==================== -->
+<section class="khu-sp" id="san-pham">
+  <div class="khung-ngoai">
+    <div class="tieu-de-giua">
+      <h2>🛍️ Sản phẩm đang bán</h2>
+      <p>Giá luôn đúng như bot báo — bấm “Đặt đơn” là bot ghi đơn giúp mình liền.</p>
+    </div>
+    <div class="loi-sp" id="loi-sp"></div>
   </div>
 </section>
 
@@ -339,6 +370,28 @@ try{
 }catch(e){}
 
 const VND = n => n.toLocaleString("vi-VN") + "đ";
+const anHtml = s => String(s).replace(/[&<>"']/g,
+  c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* ----- Đổ sản phẩm ra lưới ----- */
+const loiSp = document.getElementById("loi-sp");
+(CAU_HINH.sanPham || []).forEach((sp, i) => {
+  const the = document.createElement("div");
+  the.className = "the-sp";
+  the.innerHTML = `
+    <div class="emoji"></div>
+    <b></b>
+    <div class="mo-ta"></div>
+    <div class="gia"><b></b>${sp.giaCu ? "<s></s>" : ""}</div>
+    <button class="btn btn-chinh btn-nho">🛒 Đặt đơn</button>`;
+  the.querySelector(".emoji").textContent = sp.emoji || "🛍️";
+  the.querySelector("b").textContent = sp.ten;
+  the.querySelector(".mo-ta").textContent = sp.moTa || "";
+  the.querySelector(".gia b").textContent = VND(sp.gia);
+  if (sp.giaCu) the.querySelector(".gia s").textContent = VND(sp.giaCu);
+  the.querySelector("button").onclick = () => moForm(i);
+  loiSp.appendChild(the);
+});
 
 /* ----- Đổ tên shop vào các chỗ ----- */
 ["ten-shop","ten-shop-2","ten-shop-3"].forEach(id => document.getElementById(id).textContent = CAU_HINH.tenShop);
@@ -406,8 +459,9 @@ let daMoLanDau = false;
 try{
   const cu = JSON.parse(localStorage.getItem("mino_widget_tin") || "[]");
   cu.forEach(m => {
+    const noi = m.nguoi === "khach" ? anHtml(m.noi) : m.noi; // tin bot giữ HTML có chủ đích
     noiTin.insertAdjacentHTML("beforeend",
-      `<div class="tin-nhan ${m.nguoi==="khach"?"tin-khach":"tin-bot"}">${m.noi}</div>`);
+      `<div class="tin-nhan ${m.nguoi==="khach"?"tin-khach":"tin-bot"}">${noi}</div>`);
   });
   noiTin.scrollTop = noiTin.scrollHeight;
 }catch(e){}
@@ -448,7 +502,9 @@ function themTin(nguoi, noi){
 }
 function batTatChat(){
   const mo = cuaSo.classList.toggle("mo");
-  document.getElementById("nut-chat").textContent = mo ? "✕" : "💬";
+  const nut = document.getElementById("nut-chat");
+  nut.textContent = mo ? "✕" : "💬";
+  nut.setAttribute("aria-label", mo ? "Đóng chat" : "Mở chat");
   if(mo && !daMoLanDau){
     daMoLanDau = true;
     if(noiTin.children.length === 0){
@@ -494,7 +550,7 @@ function guiTinTu(chu){ oNhap.value = chu; guiTin(); }
 function guiTin(){
   const chu = oNhap.value.trim();
   if(!chu) return;
-  themTin("khach", chu);
+  themTin("khach", anHtml(chu));   // escape — tin khách không được mang HTML
   logHoiThoai("khach", chu);
   oNhap.value = "";
   botTraLoi(chu);

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kênh Chat — Hội thoại | Cửa hàng của Mino</title>
 <meta name="description" content="Bảng quản trị hội thoại đa kênh của shop — bot Mino trả lời tự động, chủ shop tiếp tay khi cần.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>">
 <style>
   :root{
     --bg:#eef2f9;
@@ -16,6 +17,7 @@
     --xanh:#2e6cf6;
     --xanh-nen:#e8f0fe;
     --xanh-dam:#1d4ed8;
+    --tim:#8b5cf6;
     --luc:#16a34a;   --luc-nen:#e5f6ec;
     --cam:#f59e0b;   --cam-nen:#fdf1dd;
     --do:#ef4444;
@@ -646,6 +648,7 @@ let cheDoSoan   = 'tin';          // 'tin' | 'ghichu'
 let star = {};                     // id -> true
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const boThe = chu => String(chu ?? '').replace(/<[^>]+>/g, '');
 
 function chuCaiAvatar(ten){
   const t = ten.trim().split(/\s+/).filter(w => /[a-zA-ZÀ-ỹ0-9]/.test(w));
@@ -694,7 +697,6 @@ function dsLoc(){
 
 function renderDS(){
   const ds = dsLoc();
-  const boThe = chu => String(chu||'').replace(/<[^>]+>/g,'');
   document.getElementById('ds').innerHTML = ds.length ? ds.map(ht=>{
     const k = KENH_MAP[ht.kenh] || KENH_MAP.web;
     const xem = ht.tin.length ? (ht.tin[ht.tin.length-1].tep ? '📎 ' + ht.tin[ht.tin.length-1].tep.ten : boThe(ht.tin[ht.tin.length-1].noi)) : '';
@@ -914,7 +916,8 @@ function taiLive(){
     Object.entries(nhom).forEach(([phien, ms])=>{
       const id = 'live-' + phien;
       let ht = HOI_THOAI.find(h=>h.id===id);
-      const tin = ms.map(m=>({ai: m.nguoi==='khach'?'khach':'bot', noi:m.noi, gio:m.gio}));
+      // tin live đã gỡ thẻ HTML (trang bán hàng gửi câu bot kèm <b>… để tô đậm)
+      const tin = ms.map(m=>({ai: m.nguoi==='khach'?'khach':'bot', noi: boThe(m.noi), gio:m.gio}));
       const cuoi = ms[ms.length-1];
       if(!ht){
         const gioDau = ms[0].gio || gioHienTai();
@@ -934,6 +937,7 @@ function taiLive(){
       }
       if(ht.tin.length !== tin.length){ ht.tin = tin; coMoi = true; }
       ht.chuaDoc = cuoi.nguoi==='khach' ? Math.max(ht.chuaDoc,1) : 0;
+      if(htDangXem && htDangXem.id === ht.id) ht.chuaDoc = 0;   // đang mở thì không tính là chưa đọc
       ht.trangThai = cuoi.nguoi==='khach' ? (ht.trangThai==='dang'?'dang':'cho') : 'xong';
     });
 

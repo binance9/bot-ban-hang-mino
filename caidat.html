@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cài đặt — Cửa hàng của Mino</title>
 <meta name="description" content="Điền thông tin shop, món bán, kịch bản bot — bấm Lưu là chạy. Không cần biết code.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
 <style>
   :root{
     --bg:#f5f8ff; --card:#fff; --vien:#e4eaf3;
@@ -219,17 +220,26 @@
 let CAU_DAT = {};
 try{ CAU_DAT = JSON.parse(localStorage.getItem("mino_cau_hinh") || "{}"); }catch(e){}
 
-/* ===== Hàng món hàng ===== */
+/* ===== Hàng món hàng (dựng bằng DOM — giá trị chứa " hay <> cũng không vỡ form) ===== */
 function hangSP(sp){
   sp = sp || {};
   const div = document.createElement("div");
   div.className = "hang hang-sp";
-  div.innerHTML = `
-    <input type="text" placeholder="🎁" class="f-emoji" value="${sp.emoji||""}">
-    <input type="text" placeholder="Tên món (VD: Nến thơm vanilla)" class="f-ten" value="${sp.ten||""}">
-    <input type="number" placeholder="Giá (VD: 185000)" class="f-gia" value="${sp.gia||""}">
-    <input type="text" placeholder="Mô tả ngắn" class="f-mota mo-rong" value="${sp.moTa||""}">
-    <button class="x" onclick="this.parentElement.remove()" title="Xóa món">✕</button>`;
+  const o = (cls, kieu, gtri, cho) => {
+    const el = document.createElement("input");
+    el.type = kieu; el.className = cls; el.value = gtri ?? "";
+    el.placeholder = cho;
+    div.appendChild(el);
+    return el;
+  };
+  o("f-emoji", "text", sp.emoji, "🎁");
+  o("f-ten", "text", sp.ten, "Tên món (VD: Nến thơm vanilla)");
+  o("f-gia", "number", sp.gia ?? "", "Giá (VD: 185000)");
+  o("f-mota mo-rong", "text", sp.moTa, "Mô tả ngắn");
+  const x = document.createElement("button");
+  x.className = "x"; x.title = "Xóa món"; x.textContent = "✕";
+  x.onclick = () => div.remove();
+  div.appendChild(x);
   return div;
 }
 function themHang(sp){ document.getElementById("danh-sach-sp").appendChild(hangSP(sp)); }
@@ -239,10 +249,18 @@ function hangHD(hd){
   hd = hd || {};
   const div = document.createElement("div");
   div.className = "hang hang-hd";
-  div.innerHTML = `
-    <input type="text" placeholder="Từ khóa, cách nhau bằng dấu phẩy (VD: giá, bao nhiêu)" class="f-khoa" value="${(hd.khoa||[]).join(", ")}">
-    <textarea rows="2" placeholder="Câu bot trả lời khi khách hỏi" class="f-traloi mo-rong">${hd.traLoi||""}</textarea>
-    <button class="x" onclick="this.parentElement.remove()" title="Xóa kịch bản">✕</button>`;
+  const khoa = document.createElement("input");
+  khoa.type = "text"; khoa.className = "f-khoa";
+  khoa.placeholder = "Từ khóa, cách nhau bằng dấu phẩy (VD: giá, bao nhiêu)";
+  khoa.value = (hd.khoa || []).join(", ");
+  const traLoi = document.createElement("textarea");
+  traLoi.rows = 2; traLoi.className = "f-traloi mo-rong";
+  traLoi.placeholder = "Câu bot trả lời khi khách hỏi";
+  traLoi.value = hd.traLoi || "";
+  const x = document.createElement("button");
+  x.className = "x"; x.title = "Xóa kịch bản"; x.textContent = "✕";
+  x.onclick = () => div.remove();
+  div.append(khoa, traLoi, x);
   return div;
 }
 function themHD(hd){ document.getElementById("danh-sach-hd").appendChild(hangHD(hd)); }

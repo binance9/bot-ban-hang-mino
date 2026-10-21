@@ -1,63 +1,71 @@
 # 🤖 Mino — Web bán hàng + Bot trả lời khách 24/7
 
-Bộ web bán hàng nhỏ gọn gồm **4 file HTML** — mở lên là chạy, **không cần cài đặt gì cả**.
+Trang web bán hàng nhỏ gọn gồm **4 file HTML**, bot chat tự động báo giá – nhận đơn COD 24/7.
+**Không cần cài đặt gì cả** — không server, không database, không framework. Mở file là chạy.
 
-- 🛒 Khách vào web → chat với **bot Mino** → bot tự báo giá theo tên món, nhận đơn COD
-- 💬 Chủ shop mở **Kênh Chat** → xem hội thoại, đơn hàng, trả lời khách, quản lý cơ hội
-- ⚙️ Đổi thông tin shop bằng **trang Cài đặt dạng form** — không cần sửa code
-- 🔗 Kèm hướng dẫn nối **Facebook Messenger** & **Zalo OA** (cả đường không cần code lẫn đường API)
+> 🪪 Mã nguồn mở theo giấy phép **MIT** — thoải mái dùng, sửa, bán cho shop của mình.
 
 ---
 
-## 📥 Tải về (chọn 1 trong 2 cách)
+## ✨ Tính năng
 
-### Cách 1 — Tải ZIP (ai không biết git, dễ nhất)
-1. Bấm nút xanh **`< > Code`** ở đầu trang này
-2. Chọn **Download ZIP**
-3. Giải nén file vừa tải — xong, đủ cả 4 trang bên trong
+| Trang | Dành cho | Làm gì |
+|---|---|---|
+| `index.html` | 🛒 Khách hàng | Trang bán hàng: lưới sản phẩm + bot **Mino** chat tư vấn, dò tên món báo giá, nhận đơn COD |
+| `admin.html` | 💬 Chủ shop | **Kênh Chat**: hội thoại live từ web, đơn hàng qua form, trả lời khách tay (đẩy ngược về widget), ghi chú nội bộ, cơ hội kinh doanh |
+| `caidat.html` | ⚙️ Chủ shop | Cài đặt bằng **form** (không cần sửa code): thông tin shop, món bán, kịch bản hỏi–đáp của bot |
+| `huong-dan.html` | 📘 Mọi người | Hướng dẫn 3 bước + nối Facebook Messenger & Zalo OA (đường AhaChat không cần code lẫn đường API chính chủ) |
 
-### Cách 2 — Dùng git
+Bot hoạt động theo 2 lớp: khách nhắn **có tên món** → báo giá đúng món đó; không có tên món → dò **bảng từ khóa** (giá / ship / đặt hàng / đổi trả…); không khớp → nhờ chủ shop gọi lại (kèm gợi ý để lại SĐT).
+
+---
+
+## 📥 Tải về
+
+**Cách 1 — Tải ZIP (không cần biết git, dễ nhất)**
+1. Bấm nút xanh **`< > Code`** ở đầu trang repo
+2. Chọn **Download ZIP** → giải nén là đủ 4 trang bên trong
+
+**Cách 2 — Dùng git**
 ```bash
 git clone https://github.com/binance9/bot-ban-hang-mino.git
 ```
 
 ## ▶️ Chạy (5 giây)
 
-Mở file **`index.html`** bằng trình duyệt (Chrome hoặc Edge). Hết — không cần cài Python, Node, hay gì cả.
+Mở file **`index.html`** bằng Chrome hoặc Edge — hết.
 
-> 💡 Muốn có đường link gửi cho khách: vào **netlify.com/drop**, kéo cả thư mục vào, nhận link miễn phí ngay lập tức.
+> 💡 Muốn có **link gửi cho khách**: vào [netlify.com/drop](https://app.netlify.com/drop), kéo cả thư mục vào, nhận link miễn phí ngay lập tức.
 
 ## ⚙️ Cài đặt thông tin shop (2 phút, không cần biết code)
 
-1. Mở file **`caidat.html`** (hoặc bấm "⚙️ Cài đặt" trên menu)
-2. Điền tên shop, số điện thoại → bấm **＋ Thêm món** nhập món bán (tên + giá)
+1. Mở **`caidat.html`** (hoặc bấm *⚙️ Cài đặt* trên menu)
+2. Điền tên shop, SĐT → **＋ Thêm món** nhập món bán (tên + giá)
 3. Thêm kịch bản: khách hỏi *"giá"* → bot trả câu gì; khách hỏi *"ship"* → trả câu gì
 4. Bấm **💾 Lưu cài đặt** → mở lại `index.html` (F5) — bot nói theo shop mình liền
 
 Sửa hỏng? Bấm **↺ Khôi phục mặc định** — về như cũ trong 1 giây.
 
-## 📋 Các file trong bộ
+## 💬 Chăm khách hằng ngày
 
-| File | Dành cho | Làm gì |
-|---|---|---|
-| `index.html` | 🛒 Khách hàng | Trang bán hàng + bot Mino chat tư vấn, nhận đơn |
-| `admin.html` | 💬 Chủ shop | Kênh Chat: hội thoại, đơn hàng, cơ hội kinh doanh |
-| `caidat.html` | ⚙️ Chủ shop | Cài đặt bằng form: thông tin, món bán, kịch bản bot |
-| `huong-dan.html` | 📘 Mọi người | Hướng dẫn 3 bước + nối Facebook/Zalo chi tiết |
+Mở **`admin.html`** (bấm *🖥️ Kênh Chat*):
+- Hội thoại khách chat với bot hiện tự động theo phiên (cột 2, nhãn *Khách online*)
+- Đơn khách đặt qua form hiện sẵn kèm tên + SĐT + địa chỉ — gọi xác nhận là xuất kho
+- Khách bot chưa xử lý được → gõ trả lời tay, tin đẩy ngược về widget của khách ngay
+- Xem *Hướng dẫn* → mục 4 & 5 để nối bot với Facebook Messenger / Zalo OA
 
-## 🔗 Kết nối Facebook Messenger / Zalo
+---
 
-Mở **`huong-dan.html`** — mục 4 và 5, có 2 đường:
+## 🧠 Nâng cấp bot
 
-- **Không cần code (khuyên dùng):** AhaChat — miễn phí, kéo thả, 10 phút chạy cả Messenger lẫn Zalo
-- **API chính chủ:** code webhook Meta + Zalo Open API chép được ngay, từng bước có ảnh cảnh báo lỗi hay gặp
+Muốn bot hiểu câu tự do (thay vì dò từ khóa): chỉ cần **thay 1 hàm `botTraLoi()`** trong `index.html` — cắm API AI vào đó, phần còn lại giữ nguyên.
 
-## ❓ Vài điều nên biết
+## 📌 Nên biết
 
-- Dữ liệu demo (hội thoại, đơn, cài đặt) lưu **trên trình duyệt của máy mình** — muốn nhiều máy chung dữ liệu thì cần thêm server nhỏ (hướng dẫn trong `huong-dan.html` mục 6)
-- Xóa dữ liệu demo: nhấn `F12` → Application → Local Storage → xóa các khoá `donhang`, `mino_*`
-- Bot trả lời theo **từ khóa + dò tên sản phẩm**; muốn thông minh hơn (hiểu câu tự do) chỉ cần cắm API AI vào hàm `botTraLoi()` trong `index.html` — thay đúng 1 hàm
+- Dữ liệu (hội thoại, đơn, cài đặt) lưu **trong trình duyệt của máy đang mở** (localStorage). Muốn nhiều máy chung dữ liệu → cần thêm server nhỏ (gợi ý trong `huong-dan.html` mục 6)
+- Muốn **reset dữ liệu demo**: F12 → Application → Local Storage → xóa các khoá `donhang`, `mino_*`
+- Công nghệ: HTML + CSS + JavaScript thuần, **0 dependency**, tổng ~100 KB
 
 ## 📄 Giấy phép
 
-MIT — thoải mái lấy về dùng, sửa, bán. Không cần xin ai.
+[MIT](LICENSE) — dùng, sửa, bán thoải mái. Không cần xin ai.
